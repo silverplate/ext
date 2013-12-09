@@ -561,4 +561,22 @@ class File
             array_slice(str_split(md5($_value), 1), 0, 4)
         );
     }
+
+    /**
+     * @return int
+     */
+    public static function getUploadMaxFilesize()
+    {
+        $size = trim(ini_get('upload_max_filesize'));
+        $last = strtolower($size[strlen($size) - 1]);
+        $bites = (int) $size;
+
+        switch ($last) {
+            case 'g': $bites *= 1024;
+            case 'm': $bites *= 1024;
+            case 'k': $bites *= 1024;
+        }
+
+        return $bites;
+    }
 }
