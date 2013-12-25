@@ -237,20 +237,30 @@ class Image extends File
 
     /**
      * @param Image|string $_srcImage
-     * @param string $_watermarkPath
+     * @param string $_stampPath
+     * @param string $_pos
      * @return resource
      */
-    public static function getWatermark($_srcImage, $_watermarkPath)
+    public static function getWatermark($_srcImage, $_stampPath, $_pos = null)
     {
-        $margin = array(0, 20, 15, 0);
         $src = $_srcImage instanceof Image ? $_srcImage : new Image($_srcImage);
-        $wtrmrk = new Image($_watermarkPath);
+        $wtrmrk = new Image($_stampPath);
+
+        if ($_pos == 'center') {
+            $x = round(($src->getWidth() - $wtrmrk->getWidth()) / 2);
+            $y = round(($src->getHeight() - $wtrmrk->getHeight()) / 2);
+
+        } else {
+            $margin = array(0, 20, 15, 0);
+            $x = $src->getWidth() - $wtrmrk->getWidth() - $margin[1];
+            $y = $src->getHeight() - $wtrmrk->getHeight() - $margin[2];
+        }
 
         imagecopy(
             $src->getGd(),
             $wtrmrk->getGd(),
-            $src->getWidth() - $wtrmrk->getWidth() - $margin[1],
-            $src->getHeight() - $wtrmrk->getHeight() - $margin[2],
+            $x,
+            $y,
             0,
             0,
             $wtrmrk->getWidth(),
