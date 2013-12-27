@@ -4,7 +4,7 @@ namespace Ext;
 
 class String
 {
-    public static function _split($_string)
+    protected static function _split($_string)
     {
         $res = array('');
         $lc = strtolower($_string);
