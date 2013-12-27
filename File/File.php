@@ -2,8 +2,6 @@
 
 namespace Ext;
 
-use \Ext\File\Image;
-
 class File
 {
     protected $_path;
@@ -300,14 +298,14 @@ class File
      * @param string $_path
      * @param string $_pathStartsWith
      * @param string $_uriStartsWith
-     * @return File|Image
+     * @return self|\Ext\Image
      */
     public static function factory($_path,
                                    $_pathStartsWith = null,
                                    $_uriStartsWith = null)
     {
         $class = static::isImageExt(static::computeExt($_path))
-               ? 'Image'
+               ? '\Ext\Image'
                : get_called_class();
 
         return new $class($_path, $_pathStartsWith, $_uriStartsWith);
