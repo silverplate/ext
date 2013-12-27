@@ -2,15 +2,21 @@
 
 namespace Ext;
 
+use \Ext\File;
+use \Ext\Xml;
+
 class Image extends File
 {
+    /** @var int */
     protected $_width;
+
+    /** @var int */
     protected $_height;
+
+    /** @var string */
     protected $_text;
 
-    /**
-     * @var resource
-     */
+    /** @var resource */
     protected $_gd;
 
     public function computeImageSize()
@@ -30,10 +36,7 @@ class Image extends File
 
     public function getWidth()
     {
-        if (!isset($this->_width)) {
-            $this->computeImageSize();
-        }
-
+        if (!isset($this->_width)) $this->computeImageSize();
         return $this->_width;
     }
 
@@ -44,10 +47,7 @@ class Image extends File
 
     public function getHeight()
     {
-        if (!isset($this->_height)) {
-            $this->computeImageSize();
-        }
-
+        if (!isset($this->_height)) $this->computeImageSize();
         return $this->_height;
     }
 
@@ -58,10 +58,7 @@ class Image extends File
 
     public function getMime()
     {
-        if (!isset($this->_mime)) {
-            $this->computeImageSize();
-        }
-
+        if (!isset($this->_mime)) $this->computeImageSize();
         return parent::getMime();
     }
 
@@ -80,6 +77,44 @@ class Image extends File
         $this->_text = $_text;
     }
 
+    public function getXml($_node = null, $_xml = null, $_attrs = null)
+    {
+        $attrs = array(
+            'width' => $this->getWidth(),
+            'height' => $this->getHeight()
+        );
+
+        if ($_attrs) {
+            $attrs = array_merge($attrs, $_attrs);
+        }
+
+        $xml = is_array($_xml) ? $_xml : array();
+
+        if ($this->getText()) {
+            $xml[] = Xml::cdata('text', $this->getText());
+        }
+
+        return parent::getXml(empty($_node) ? 'image' : $_node, $xml, $attrs);
+    }
+
+    public function getNode($_dom, $_name = null, $_attrs = null)
+    {
+        $node = parent::getNode(
+            $_dom,
+            empty($_name) ? 'image' : $_name,
+            $_attrs
+        );
+
+        $node->setAttribute('width', $this->getWidth());
+        $node->setAttribute('height', $this->getHeight());
+
+        if ($this->getText()) {
+            $node->appendChild($_dom->createCDATASection($this->getText()));
+        }
+
+        return $node;
+    }
+
     public static function resize($_srcImage,
                                   $_dstWidth = null,
                                   $_dstHeight = null,
@@ -90,14 +125,16 @@ class Image extends File
             throw new \Exception('Destination width or height must be set.');
         }
 
+        $class = get_called_class();
+
         if ($_srcImage instanceof Image) {
             $srcImage = $_srcImage;
 
         } else if ($_srcImage instanceof File) {
-            $srcImage = new Image($_srcImage->getPath());
+            $srcImage = new $class($_srcImage->getPath());
 
         } else {
-            $srcImage = new Image($_srcImage);
+            $srcImage = new $class($_srcImage);
         }
 
         $srcFilePath  = $_srcImage->getPath();
@@ -110,9 +147,15 @@ class Image extends File
             throw new \Exception('Unknown image type.');
         }
 
-        $dstWidth = empty($_dstWidth) ? $_dstHeight / $srcHeight * $srcWidth : $_dstWidth;
-        $dstHeight = empty($_dstHeight) ? $_dstWidth / $srcWidth * $srcHeight : $_dstHeight;
-        $dstFilePath = empty($_dstFilePath) ? $srcFilePath : $_dstFilePath;
+        $dstWidth = empty($_dstWidth)
+                  ? $_dstHeight / $srcHeight * $srcWidth
+                  : $_dstWidth;
+        $dstHeight = empty($_dstHeight)
+                   ? $_dstWidth / $srcWidth * $srcHeight
+                   : $_dstHeight;
+        $dstFilePath = empty($_dstFilePath)
+                     ? $srcFilePath
+                     : $_dstFilePath;
         $dstFileInfo = pathinfo($dstFilePath);
 
         // Если исходное изображение больше
@@ -141,30 +184,47 @@ class Image extends File
             // то нужно обрезать изображение
             if ($cropWidth != $srcWidth || $cropHeight != $srcHeight) {
                 $croppedImage = imagecreatetruecolor($cropWidth, $cropHeight);
-                imagecopy($croppedImage, $src, 0, 0, $cropX, $cropY, $cropWidth, $cropHeight);
+                imagecopy(
+                    $croppedImage, $src,
+                    0, 0,
+                    $cropX, $cropY,
+                    $cropWidth, $cropHeight
+                );
                 $src = $croppedImage;
                 $srcWidth = $cropWidth;
                 $srcHeight = $cropHeight;
             }
 
             $newImage = imagecreatetruecolor($dstWidth, $dstHeight);
-            imagecopyresampled($newImage, $src, 0, 0, 0, 0, $dstWidth, $dstHeight, $srcWidth, $srcHeight);
+            imagecopyresampled(
+                $newImage, $src,
+                0, 0,
+                0, 0,
+                $dstWidth, $dstHeight,
+                $srcWidth, $srcHeight
+            );
 
-            $dstFilePathWithType = $dstFileInfo['dirname'] . '/' . $dstFileInfo['filename'] . '.jpg';
+            $dstFilePathWithType = $dstFileInfo['dirname'] . '/' .
+                                   $dstFileInfo['filename'] . '.jpg';
             static::createDir($dstFileInfo['dirname']);
             imagejpeg($newImage, $dstFilePathWithType, $_quality);
             static::chmod($dstFilePathWithType, 0777);
 
-            if (is_null($_dstFilePath) && $dstFilePathWithType != $srcFilePath) {
+            if (
+                is_null($_dstFilePath) &&
+                $dstFilePathWithType != $srcFilePath
+            ) {
                 static::deleteFile($srcFilePath);
             }
 
-            return new Image($dstFilePathWithType, ROOT_PATH . '/public/', '/');
+            return new $class($dstFilePathWithType);
 
         // Исходное изображение меньше,
         // поэтому ничего не делаем
         } else {
-            $dstFilePathWithType = $dstFileInfo['dirname'] . '/' . $dstFileInfo['filename'] . '.' . $srcExtension;
+            $dstFilePathWithType = $dstFileInfo['dirname'] . '/' .
+                                   $dstFileInfo['filename'] . '.' .
+                                   $srcExtension;
 
             if (!is_file($dstFilePathWithType)) {
                 static::createDir($dstFileInfo['dirname']);
@@ -172,7 +232,7 @@ class Image extends File
                 static::chmod($dstFilePathWithType, 0777);
             }
 
-            return new Image($dstFilePathWithType, ROOT_PATH . '/public/', '/');
+            return new $class($dstFilePathWithType);
         }
     }
 
@@ -193,6 +253,7 @@ class Image extends File
                 $_image->getWidth(), $_height
             );
 
+            /** @var Image $image */
             $class = get_called_class();
             $image = new $class($_image->getPath());
             $image->setGd($cropped);
@@ -207,11 +268,11 @@ class Image extends File
 
     /**
      * @param string $_dstImage
-     * @param resource $_replacement
+     * @param resource $_repl
      * @param string|bool $_backup
      * @return bool
      */
-    public static function replaceWithGd($_dstImage, $_replacement, $_backup = null)
+    public static function replaceWithGd($_dstImage, $_repl, $_backup = null)
     {
         if ($_backup) {
             if ($_backup === true) {
@@ -230,8 +291,9 @@ class Image extends File
             }
         }
 
-        $result = imagejpeg($_replacement, $_dstImage, 100);
+        $result = imagejpeg($_repl, $_dstImage, 100);
         static::chmod($_dstImage, 0777);
+
         return $result;
     }
 

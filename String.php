@@ -12,16 +12,16 @@ class String
         $sep = array('_', '-', ':', '\\');
 
         for ($j = 0, $len = strlen($_string), $i = 0; $i < $len; $i++) {
-            $symb = $_string{$i};
+            $s = $_string{$i};
 
             if (
                 !empty($res[$j]) &&
-                (in_array($symb, $sep) || ($symb == $uc{$i} && !is_numeric($symb)))
+                (in_array($s, $sep) || ($s == $uc{$i} && !is_numeric($s)))
             ) {
                 $res[++$j] = '';
             }
 
-            if (!in_array($symb, $sep)) {
+            if (!in_array($s, $sep)) {
                 $res[$j] .= $lc{$i};
             }
         }
@@ -29,20 +29,20 @@ class String
         return $res;
     }
 
-    public static function upperCase($_str, $_isLcFirst = false)
+    public static function upperCase($_s, $_isLcFirst = false)
     {
-        $res = str_replace(' ', '', ucwords(implode(' ', self::_split($_str))));
+        $res = str_replace(' ', '', ucwords(implode(' ', static::_split($_s))));
         return $_isLcFirst ? lcfirst($res) : $res;
     }
 
     public static function underline($_string)
     {
-        return implode('_', self::_split($_string));
+        return implode('_', static::_split($_string));
     }
 
     public static function dash($_string)
     {
-        return implode('-', self::_split($_string));
+        return implode('-', static::_split($_string));
     }
 
     /**
@@ -63,7 +63,7 @@ class String
         );
 
         for ($i = 0; $i < mb_strlen($_string); $i++) {
-            $char = self::getPart($_string, $i, 1);
+            $char = static::getPart($_string, $i, 1);
 
             if (isset($rus[$char])) {
                 $result .= $rus[$char];
@@ -161,10 +161,10 @@ class String
     public static function toUpperFirst($_string)
     {
         if ($_string) {
-            $result = self::toUpper(self::getPart($_string, 0, 1));
+            $result = static::toUpper(static::getPart($_string, 0, 1));
 
-            if (self::getLength($_string) > 1) {
-                $result .= self::getPart($_string, 1);
+            if (static::getLength($_string) > 1) {
+                $result .= static::getPart($_string, 1);
             }
 
             return $result;
@@ -181,8 +181,8 @@ class String
     public static function getPart($_string, $_start, $_length = null)
     {
         return $_length
-            ? mb_substr($_string, $_start, $_length)
-            : mb_substr($_string, $_start);
+             ? mb_substr($_string, $_start, $_length)
+             : mb_substr($_string, $_start);
     }
 
     public static function getRandom($_length = 8)
@@ -248,10 +248,10 @@ class String
      */
     public static function getRandomReadableAlt($_length = null)
     {
-        $str = self::getRandomReadable($_length);
+        $str = static::getRandomReadable($_length);
 
         return substr($str, strlen($str) - 1, 1) .
-        substr($str, 0, strlen($str) - 1);
+               substr($str, 0, strlen($str) - 1);
     }
 
     public static function cut($_string, $_length, $_isHtml = true)
@@ -297,12 +297,12 @@ class String
         return $result;
     }
 
-    public static function wordWrap($_string, $_width, $_break = null, $_cut = null)
+    public static function wordWrap($_str, $_width, $_br = null, $_cut = null)
     {
         return iconv('cp1251', 'utf-8', wordwrap(
-            iconv('utf-8', 'cp1251', $_string),
+            iconv('utf-8', 'cp1251', $_str),
             $_width,
-            $_break,
+            $_br,
             $_cut
         ));
     }
@@ -331,37 +331,36 @@ class String
         return mb_strlen($_string);
     }
 
-// Пока реализация XML не требуется.
-//    /**
-//     * Символы &mdash;, &times; и другие заменяются на текстовый вариант.
-//     *
-//     * @param string $_content
-//     * @return string
-//     */
-//    public static function replaceEntities($_content)
-//    {
-//        $matches = array();
-//        $content = $_content;
-//        preg_match_all('/&[0-9a-zA-Z]+;/', $content, $matches);
-//
-//        if ($matches) {
-//            $dom = new DOMDocument('1.0', 'utf-8');
-//            $dom->loadXML(
-//                Ext_Xml::getDocument('<e>' . implode('</e><e>', $matches[0]) . '</e>'),
-//                LIBXML_DTDLOAD + LIBXML_COMPACT + LIBXML_NOENT + LIBXML_NOERROR
-//            );
-//
-//            $entities = $dom->getElementsByTagName('e');
-//
-//            for ($i = 0; $i < $entities->length; $i++) {
-//                $value = $entities->item($i)->nodeValue;
-//
-//                if ($value) {
-//                    $content = str_replace($matches[0][$i], $value, $content);
-//                }
-//            }
-//        }
-//
-//        return $content;
-//    }
+    /**
+     * Символы &mdash;, &times; и другие заменяются на текстовый вариант.
+     *
+     * @param string $_content
+     * @return string
+     */
+    public static function replaceEntities($_content)
+    {
+        $mtch = array();
+        $content = $_content;
+        preg_match_all('/&[0-9a-zA-Z]+;/', $content, $mtch);
+
+        if ($mtch) {
+            $dom = new \DOMDocument('1.0', 'utf-8');
+            $dom->loadXML(
+                Xml::getDocument('<e>' . implode('</e><e>', $mtch[0]) . '</e>'),
+                LIBXML_DTDLOAD + LIBXML_COMPACT + LIBXML_NOENT + LIBXML_NOERROR
+            );
+
+            $entities = $dom->getElementsByTagName('e');
+
+            for ($i = 0; $i < $entities->length; $i++) {
+                $value = $entities->item($i)->nodeValue;
+
+                if ($value) {
+                    $content = str_replace($mtch[0][$i], $value, $content);
+                }
+            }
+        }
+
+        return $content;
+    }
 }

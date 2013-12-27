@@ -2,6 +2,8 @@
 
 namespace Ext;
 
+use \Ext\File\Image;
+
 class File
 {
     protected $_path;
@@ -21,9 +23,7 @@ class File
      */
     protected static $_langs = array();
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected static $_url;
 
     /**
@@ -215,12 +215,12 @@ class File
 
     public static function normalizeDirName($_name)
     {
-        return self::normalizeName($_name, true);
+        return static::normalizeName($_name, true);
     }
 
     /**
      * @param string $_name
-     * @return boolean
+     * @return bool
      */
     public static function checkName($_name)
     {
@@ -239,21 +239,21 @@ class File
      */
     public static function log($_filePath, $_content)
     {
-        $content = array(date('Y-m-d H:i:s'));
+        $log = array(date('Y-m-d H:i:s'));
 
         if (is_array($_content)) {
             foreach ($_content as $key => $item) {
                 $item = trim($item);
 
-                if (!is_int($key)) $content[] = $key;
-                $content[] = strpos($item, "\t") === false ? $item : "\"$item\"";
+                if (!is_int($key)) $log[] = $key;
+                $log[] = strpos($item, "\t") === false ? $item : "\"$item\"";
             }
 
         } else {
-            $content[] = $_content;
+            $log[] = $_content;
         }
 
-        return static::append($_filePath, implode("\t", $content) . PHP_EOL);
+        return static::append($_filePath, implode("\t", $log) . PHP_EOL);
     }
 
     /**
@@ -302,7 +302,9 @@ class File
      * @param string $_uriStartsWith
      * @return File|Image
      */
-    public static function factory($_path, $_pathStartsWith = null, $_uriStartsWith = null)
+    public static function factory($_path,
+                                   $_pathStartsWith = null,
+                                   $_uriStartsWith = null)
     {
         $class = static::isImageExt(static::computeExt($_path))
                ? 'Image'
@@ -311,7 +313,9 @@ class File
         return new $class($_path, $_pathStartsWith, $_uriStartsWith);
     }
 
-    public function __construct($_path = null, $_pathStartsWith = null, $_uriStartsWith = null)
+    public function __construct($_path = null,
+                                $_pathStartsWith = null,
+                                $_uriStartsWith = null)
     {
         if ($_pathStartsWith) {
             $this->setPathStartsWith($_pathStartsWith);
@@ -346,18 +350,23 @@ class File
         return $this->_uriStartsWith;
     }
 
-    public static function computeUri($_path = null, $_pathStart = null, $_uriStart = null)
+    public static function computeUri($_path,
+                                      $_pathStart = null,
+                                      $_uriStart = null)
     {
-        if ($_path) {
-            $uriStart  = is_null($_uriStart) ? '/' : $_uriStart;
-            $pathStart = is_null($_pathStart)
-                       ? ROOT_PATH . '/public/'
-                       : $_pathStart;
+        $uriStart  = is_null($_uriStart) ? '/' : $_uriStart;
 
-            return $pathStart ? str_replace($pathStart, $uriStart, $_path) : $_path;
+        if ($_pathStart) {
+            $pathStart = $_pathStart;
+
+        } else if (!empty($_SERVER['DOCUMENT_ROOT'])) {
+            $pathStart = $_SERVER['DOCUMENT_ROOT'];
+
+        } else {
+            throw new \Exception('Dont\'t know where is public folder.');
         }
 
-        return false;
+        return str_replace($pathStart, $uriStart, $_path);
     }
 
     public function setPath($_path)
@@ -470,6 +479,88 @@ class File
     public function getSizeMeasure()
     {
         return static::computeSizeMeasure($this->getSize());
+    }
+
+    public function getXml($_node = null, $_xml = null, $_attrs = null)
+    {
+        $attrs = array(
+            'uri' => $this->getUri(),
+            'path' => $this->getPath(),
+            'filename' => $this->getFilename(),
+            'name' => $this->getName(),
+            'extension' => $this->getExt()
+        );
+
+        if ($_attrs) {
+            $attrs = array_merge($attrs, $_attrs);
+        }
+
+        $xml = is_array($_xml) ? $_xml : array($_xml);
+        $size = $this->getSizeMeasure();
+
+        $xml[] = Xml::cdata('size', $size['string'], array(
+            'xml:lang' => 'ru',
+            'value' => $size['value'],
+            'measure' => $size['measure']
+        ));
+
+        foreach (self::$_langs as $lang) {
+            if (isset($size["string-$lang"])) {
+                $xml[] = Xml::cdata('size', $size["string-$lang"], array(
+                    'xml:lang' => $lang,
+                    'value' => $size['value'],
+                    'measure' => $size["measure-$lang"]
+                ));
+            }
+        }
+
+        return Xml::node(empty($_node) ? 'file' : $_node, $xml, $attrs);
+    }
+
+    /**
+     * @param \DOMDocument $_dom
+     * @param string $_name
+     * @param array $_attrs
+     * @return \DOMElement
+     */
+    public function getNode($_dom, $_name = null, $_attrs = null)
+    {
+        $size = $this->getSizeMeasure();
+        $node = $_dom->createElement(empty($_name) ? 'file' : $_name);
+
+        if (!empty($_attrs)) {
+            foreach ($_attrs as $name => $value) {
+                $node->setAttribute(Xml::normalize($name), $value);
+            }
+        }
+
+        $node->setAttribute('uri', $this->getUri());
+        $node->setAttribute('path', $this->getPath());
+        $node->setAttribute('filename', $this->getFilename());
+        $node->setAttribute('name', $this->getName());
+        $node->setAttribute('extension', $this->getExt());
+
+        $s = $_dom->createElement('size');
+        $s->setAttribute('xml:lang', 'ru');
+        $s->setAttribute('value', $size['value']);
+        $s->setAttribute('measure', $size['measure']);
+        $s->appendChild($_dom->createCDATASection($size['string']));
+        $node->appendChild($s);
+
+        foreach (self::$_langs as $lang) {
+            if (isset($size["string-$lang"])) {
+                $s = $_dom->createElement('size');
+                $node->appendChild($s);
+                $s->setAttribute('xml:lang', $lang);
+                $s->setAttribute('value', $size['value']);
+                $s->setAttribute('measure', $size["measure-$lang"]);
+                $s->appendChild(
+                    $_dom->createCDATASection($size["string-$lang"])
+                );
+            }
+        }
+
+        return $node;
     }
 
     public static function allowAll($_path)

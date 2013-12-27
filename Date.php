@@ -5,13 +5,38 @@ namespace Ext;
 class Date
 {
     protected static $_months = array(
-        'ru' => array(array('Январь', 'Января', 'Январе'), array('Февраль', 'Февраля', 'Феврале'), array('Март', 'Марта', 'Марте'), array('Апрель', 'Апреля', 'Апреле'), array('Май', 'Мая', 'Мае'), array('Июнь', 'Июня', 'Июне'), array('Июль', 'Июля', 'Июле'), array('Август', 'Августа', 'Августе'), array('Сентябрь', 'Сентября', 'Сентябре'), array('Октябрь', 'Октября', 'Октябре'), array('Ноябрь', 'Ноября', 'Ноябре'), array('Декабрь', 'Декабря', 'Декабре')),
-        'en' => array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December')
+        'ru' => array(
+            array('Январь', 'Января', 'Январе'),
+            array('Февраль', 'Февраля', 'Феврале'),
+            array('Март', 'Марта', 'Марте'),
+            array('Апрель', 'Апреля', 'Апреле'),
+            array('Май', 'Мая', 'Мае'), array('Июнь', 'Июня', 'Июне'),
+            array('Июль', 'Июля', 'Июле'),
+            array('Август', 'Августа', 'Августе'),
+            array('Сентябрь', 'Сентября', 'Сентябре'),
+            array('Октябрь', 'Октября', 'Октябре'),
+            array('Ноябрь', 'Ноября', 'Ноябре'),
+            array('Декабрь', 'Декабря', 'Декабре')
+        ),
+        'en' => array(
+            'January', 'February', 'March',
+            'April', 'May', 'June',
+            'July', 'August', 'September',
+            'October', 'November', 'December'
+        )
     );
 
     protected static $_daysOfTheWeek = array(
-        'ru' => array(array('Понедельник'), array('Вторник'), array('Среда'), array('Четверг'), array('Пятница'), array('Суббота'), array('Воскресенье')),
-        'en' => array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
+        'ru' => array(
+            array('Понедельник'), array('Вторник'), array('Среда'),
+            array('Четверг'), array('Пятница'),
+            array('Суббота'), array('Воскресенье')
+        ),
+        'en' => array(
+            'Monday', 'Tuesday', 'Wednesday',
+            'Thursday', 'Friday',
+            'Saturday', 'Sunday'
+        )
     );
 
     public static function getMonths($_lang = 'ru')
@@ -30,11 +55,11 @@ class Date
 
     public static function guessMonth($_value)
     {
-        $value = mb_strtolower($_value);
+        $value = String::toLower($_value);
 
         foreach (self::getMonths('ru') as $id => $items) {
             foreach ($items as $item) {
-                $item = mb_strtolower($item);
+                $item = String::toLower($item);
                 if (preg_match('/^' . $value . '/', $item)) {
                     return $id + 1;
                 }
@@ -49,9 +74,9 @@ class Date
         return self::$_daysOfTheWeek[$_lang];
     }
 
-    public static function getDayOfTheWeek($_number, $_type = null, $_lang = 'ru')
+    public static function getDayOfTheWeek($_num, $_type = null, $_lang = 'ru')
     {
-        $number = (int) $_number;
+        $number = (int) $_num;
         $names = self::getDaysOfTheWeek($_lang);
         $name = $names[$number - 1];
 
@@ -62,11 +87,14 @@ class Date
     {
         return
             date('j ', $_date) .
-            mb_strtolower(self::getMonth(date('n', $_date), 2)) .
+            String::toLower(self::getMonth(date('n', $_date), 2)) .
             (date('Y') == date('Y', $_date) ? '' : date(' Y года', $_date));
     }
 
-    public static function formatExpanded($_date, $_isHuman = true, $_trimYear = 'auto', $_isTime = 'auto')
+    public static function formatExpanded($_date,
+                                          $_isHuman = true,
+                                          $_trimYear = 'auto',
+                                          $_isTime = 'auto')
     {
         $date = getdate(self::getDate($_date));
         $day = mktime(0, 0, 0, $date['mon'], $date['mday'], $date['year']);
@@ -80,7 +108,9 @@ class Date
 
         $hm = $date['hours'] . ':' . $date['minutes'];
         $hms = $hm . ':' . $date['seconds'];
-        $dmy = $date['mday'] . ' ' . mb_strtolower(self::getMonth($date['mon'], 2));
+        $dmy = $date['mday'] .
+               ' ' .
+               String::toLower(self::getMonth($date['mon'], 2));
 
         if (
             ('auto' == $_trimYear && date('Y') != $date['year']) &&
@@ -136,16 +166,16 @@ class Date
     }
 
     /**
-     * @param integer $_mins
-     * @param boolean $_isShort
-     * @param number|bool $_dayLength Нужно передать false, чтобы дни не вычислялись.
+     * @param int $_min
+     * @param bool $_isShort
+     * @param bool|int $_dayHrs Нужно передать false, чтобы дни не вычислялись.
      * @return string
      */
-    public static function formatMinutes($_mins, $_isShort = false, $_dayLength = 8)
+    public static function formatMinutes($_min, $_isShort = false, $_dayHrs = 8)
     {
-        $mins    = abs($_mins);
-        $sign    = $_mins < 0 ? '−' : '';
-        $dayMin  = empty($_dayLength) ? 0 : 60 * $_dayLength;
+        $mins    = abs($_min);
+        $sign    = $_min < 0 ? '−' : '';
+        $dayMin  = empty($_dayHrs) ? 0 : 60 * $_dayHrs;
         $days    = $dayMin == 0 ? 0 : floor($mins / $dayMin);
         $hours   = floor(($mins - $days * $dayMin) / 60);
         $minutes = round($mins - $days * $dayMin - $hours * 60);
@@ -157,7 +187,7 @@ class Date
             $result = array();
             $f = '%02d';
 
-            if (!empty($_dayLength)) {
+            if (!empty($_dayHrs)) {
                 $result[]  = sprintf($f, $days);
             }
 
@@ -177,15 +207,14 @@ class Date
         }
     }
 
-    /**
-     * @see Ext_Date::formatMinutes()
-     */
-    public static function htmlFormatMinutes($_mins, $_isShort = false, $_dayLength = 8)
+    public static function htmlFormatMinutes($_min,
+                                             $_isShort = false,
+                                             $_dayHrs = 8)
     {
         return str_replace(
             '-',
             '&minus;',
-            self::formatMinutes($_mins, $_isShort, $_dayLength)
+            static::formatMinutes($_min, $_isShort, $_dayHrs)
         );
     }
 
@@ -194,38 +223,37 @@ class Date
         return checkdate((int) $_month, (int) $_day, (int) $_year);
     }
 
-// Пока реализация XML не требуется.
-//    public static function getXml($_date, $_node = null)
-//    {
-//        $attrs = array(
-//            'unixtimestamp' => $_date,
-//            'day' => date('d', $_date),
-//            'day-zeroless' => date('j', $_date),
-//            'month' => date('m', $_date),
-//            'year' => date('Y', $_date),
-//            'date' => date('d.m.Y', $_date),
-//            'sql-date' => date('Y-m-d', $_date)
-//        );
-//
-//        if (
-//            (int) date('H', $_date) ||
-//            (int) date('i', $_date) ||
-//            (int) date('s', $_date)
-//        ) {
-//            $attrs['hour'] = date('H', $_date);
-//            $attrs['minute'] = date('i', $_date);
-//            $attrs['second'] = date('s', $_date);
-//            $attrs['time'] = date('H:i', $_date);
-//            $attrs['sql-date-time'] = date('Y-m-d H:i:s', $_date);
-//        }
-//
-//        return Ext_Xml::node(
-//            $_node ? $_node : 'date',
-//            Ext_Xml::cdata('full', self::format($_date)) .
-//            Ext_Xml::cdata('human', self::formatExpanded($_date)),
-//            $attrs
-//        );
-//    }
+    public static function getXml($_date, $_node = null)
+    {
+        $attrs = array(
+            'unixtimestamp' => $_date,
+            'day' => date('d', $_date),
+            'day-zeroless' => date('j', $_date),
+            'month' => date('m', $_date),
+            'year' => date('Y', $_date),
+            'date' => date('d.m.Y', $_date),
+            'sql-date' => date('Y-m-d', $_date)
+        );
+
+        if (
+            (int) date('H', $_date) ||
+            (int) date('i', $_date) ||
+            (int) date('s', $_date)
+        ) {
+            $attrs['hour'] = date('H', $_date);
+            $attrs['minute'] = date('i', $_date);
+            $attrs['second'] = date('s', $_date);
+            $attrs['time'] = date('H:i', $_date);
+            $attrs['sql-date-time'] = date('Y-m-d H:i:s', $_date);
+        }
+
+        return Xml::node(
+            $_node ? $_node : 'date',
+            Xml::cdata('full', self::format($_date)) .
+            Xml::cdata('human', self::formatExpanded($_date)),
+            $attrs
+        );
+    }
 
     /**
      * Распознаются следующие форматы:
@@ -242,7 +270,7 @@ class Date
         $todayNoon = mktime(12, 0, 0, date('m'), date('d'), date('Y'));
         $match = array();
 
-        switch (mb_strtolower($value)) {
+        switch (String::toLower($value)) {
             case 'позавчера':   return $todayNoon - 60 * 60 * 24 * 2;
             case 'вчера':       return $todayNoon - 60 * 60 * 24;
             case 'сегодня':     return $todayNoon;
@@ -264,10 +292,10 @@ class Date
             if (30 >= $year) $year += 2000;
             else if (100 > $year) $year += 1900;
 
-            if (self::checkDate($month, $day, $year)) {
+            if (static::checkDate($month, $day, $year)) {
                 return mktime(12, 0, 0, $month, $day, $year);
 
-            } else if (self::checkDate($day, $month, $year)) {
+            } else if (static::checkDate($day, $month, $year)) {
                 return mktime(12, 0, 0, $day, $month, $year);
             }
         }
@@ -284,7 +312,7 @@ class Date
             if (30 >= $year) $year += 2000;
             else if (100 > $year) $year += 1900;
 
-            if (self::checkDate($month, $day, $year)) {
+            if (static::checkDate($month, $day, $year)) {
                 return mktime(12, 0, 0, $month, $day, $year);
             }
         }
@@ -309,12 +337,12 @@ class Date
             !(3 == count($date) && 0 < $year)
         ) {
             $day = $date[0];
-            $month = self::guessMonth($date[1]);
+            $month = static::guessMonth($date[1]);
 
             if (isset($date[2])) $year = $date[2];
             else if (0 == $year) $year = date('Y');
 
-            if (self::checkDate($month, $day, $year)) {
+            if (static::checkDate($month, $day, $year)) {
                 return mktime(12, 0, 0, $month, $day, $year);
             }
         }
@@ -322,26 +350,29 @@ class Date
         return false;
     }
 
-    public static function formatPeriod($_from, $_till = null, $_isTypo = true, $_isYear = false)
+    public static function formatPeriod($_from,
+                                        $_till = null,
+                                        $_isTypo = true,
+                                        $_isYear = false)
     {
         $ignoreTime = array('00:00:00', '23:59:59');
-        $from = self::getDate($_from);
+        $from = static::getDate($_from);
         $fromTime = in_array(date('H:i:s', $from), $ignoreTime)
-            ? ''
-            : date('H:i', $from);
+                  ? ''
+                  : date('H:i', $from);
 
-        $till = empty($_till) ? $from : self::getDate($_till);
+        $till = empty($_till) ? $from : static::getDate($_till);
         $tillTime = in_array(date('H:i:s', $till), $ignoreTime)
-            ? ''
-            : date('H:i', $till);
+                  ? ''
+                  : date('H:i', $till);
 
         $spacer = $_isTypo ? '&nbsp;' : ' ';
         $dash = $_isTypo ? '&mdash;' : '—';
         $day = date('j', $from);
         $year = date('Y', $from);
         $nowYear = date('Y');
-        $month = String::toLower(self::getMonth(date('m', $from), 2));
-        $monthTill = String::toLower(self::getMonth(date('m', $till), 2));
+        $month = String::toLower(static::getMonth(date('m', $from), 2));
+        $monthTill = String::toLower(static::getMonth(date('m', $till), 2));
 
         if (date('Ymd', $from) == date('Ymd', $till)) {
             $result = $day . $spacer . $month;
@@ -407,47 +438,65 @@ class Date
 
     public static function getMonthFirstDay($_date = null)
     {
-        $date = self::getDate($_date);
+        $date = static::getDate($_date);
         return mktime(0, 0, 0, date('m', $date), 1, date('Y', $date));
     }
 
     public static function getMonthLastDay($_date = null)
     {
-        $date = self::getDate($_date);
-        return mktime(23, 59, 59, date('m', $date), date('t', $date), date('Y', $date));
+        $date = static::getDate($_date);
+        return mktime(
+            23, 59, 59,
+            date('m', $date), date('t', $date), date('Y', $date)
+        );
     }
 
     public static function getPreviousMonth($_date = null)
     {
-        $date = self::getDate($_date);
+        $date = static::getDate($_date);
         return mktime(0, 0, 0, date('m', $date), 0, date('Y', $date));
     }
 
     public static function getNextMonth($_date = null)
     {
-        $date = self::getDate($_date);
-        return mktime(0, 0, 0, date('m', $date), date('t', $date) + 1, date('Y', $date));
+        $date = static::getDate($_date);
+        return mktime(
+            0, 0, 0,
+            date('m', $date),
+            date('t', $date) + 1,
+            date('Y', $date)
+        );
     }
 
     public static function getWeekStart($_date = null)
     {
-        $date = self::getDate($_date);
+        $date = static::getDate($_date);
         return date('N', $date) == 1 ? $date : strtotime('last Monday', $date);
     }
 
     public static function getWeekEnd($_date = null)
     {
-        $date = self::getDate($_date);
+        $date = static::getDate($_date);
         return date('N', $date) == 7 ? $date : strtotime('next Sunday', $date);
     }
 
     public static function daysDiff($_from, $_till)
     {
-        $from = self::getDate($_from);
-        $from = mktime(0, 0, 0, date('n', $from), date('j', $from), date('Y', $from));
+        $from = static::getDate($_from);
+        $from = mktime(
+            0, 0, 0,
+            date('n', $from),
+            date('j', $from),
+            date('Y', $from)
+        );
 
-        $till = self::getDate($_till);
-        $till = mktime(0, 0, 0, date('n', $till), date('j', $till), date('Y', $till));
+        $till = static::getDate($_till);
+        $till = mktime(
+            0, 0, 0,
+            date('n', $till),
+            date('j', $till),
+            date('Y', $till)
+        );
 
         return floor(($till - $from) / 86400);
     }

@@ -28,7 +28,7 @@ class Lib
     public static function debug($_var)
     {
         if (PHP_SAPI == 'cli') {
-            // print_r($_var);
+//             print_r($_var);
             var_dump($_var);
             echo PHP_EOL;
 
