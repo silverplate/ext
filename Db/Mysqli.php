@@ -106,7 +106,7 @@ class Mysqli extends \Mysqli
                              $this->_database,
                              $this->_port);
 
-        $this->_throwError();
+        $this->_throwIfError();
 
         if (!empty($params['query'])) {
             $query = array();
@@ -144,7 +144,7 @@ class Mysqli extends \Mysqli
 
         $this->_lastQuery = $_query;
         $result = $this->query($_query);
-        $this->_throwError();
+        $this->_throwIfError();
 
         if (isset($start)) {
             list($msec, $sec) = explode(' ', microtime());
@@ -526,7 +526,7 @@ class Mysqli extends \Mysqli
         throw new \Exception($error);
     }
 
-    protected function _throwError()
+    protected function _throwIfError()
     {
         if ($this->connect_error) {
             $this->_error(
@@ -544,9 +544,6 @@ class Mysqli extends \Mysqli
             $this->_error(
                 'Connect error (' . $this->errno . ') "' . $this->error . '"'
             );
-
-        } else {
-            $this->_error('MySQL error');
         }
     }
 

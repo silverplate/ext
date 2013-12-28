@@ -2,6 +2,8 @@
 
 namespace Ext;
 
+use \Ext\Db\Mysqli;
+
 class Db
 {
     /**
@@ -41,8 +43,7 @@ class Db
             throw new \Exception('There are no params for connection.');
         }
 
-        $class = get_called_class();
-        static::set(new $class($str));
+        static::set(new Mysqli($str));
         return static::get();
     }
 
