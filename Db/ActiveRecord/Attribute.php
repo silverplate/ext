@@ -59,12 +59,12 @@ class Attribute
 
     public function getSqlValue()
     {
-        return '' == $this->_value ? 'NULL' : Db::escape($this->_value);
+        return $this->isValue() ? Db::escape($this->getValue()) : 'NULL';
     }
 
     public function isValue()
     {
-        return '' != $this->_value;
+        return (string) $this->_value != '';
     }
 
     public function getName()
