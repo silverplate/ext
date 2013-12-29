@@ -138,7 +138,9 @@ class Form extends \StdClass
                                   $_isRequired = false)
     {
         $name = String::upperCase($_type);
-        $class = '\\Ext\\Form\\Element\\' . $name;
+        $master = $class = '\\Ext\\Form\\Element';
+        $class = $master . '\\' . $name;
+        if (!class_exists($class)) $class = $master;
 
         $this->_elements[$_name] = new $class(
             $_name,
