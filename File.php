@@ -358,7 +358,7 @@ class File
             $pathStart = $_pathStart;
 
         } else if (!empty($_SERVER['DOCUMENT_ROOT'])) {
-            $pathStart = $_SERVER['DOCUMENT_ROOT'];
+            $pathStart = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/';
 
         } else {
             throw new \Exception('Dont\'t know where is public folder.');
