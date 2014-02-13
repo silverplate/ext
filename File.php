@@ -358,10 +358,14 @@ class File
             $pathStart = $_pathStart;
 
         } else if (!empty($_SERVER['DOCUMENT_ROOT'])) {
-            $pathStart = rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/';
+            $pathStart = $_SERVER['DOCUMENT_ROOT'];
 
         } else {
             throw new \Exception('Dont\'t know where is public folder.');
+        }
+
+        if (substr($uriStart, strlen($uriStart) - 1) == '/') {
+            $pathStart = rtrim($pathStart, '/') . '/';
         }
 
         return str_replace($pathStart, $uriStart, $_path);
