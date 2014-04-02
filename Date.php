@@ -4,6 +4,8 @@ namespace Ext;
 
 class Date
 {
+    const DAY_SEC = 86400;
+
     protected static $_months = array(
         'ru' => array(
             array('Январь', 'Января', 'Январе'),
@@ -83,12 +85,20 @@ class Date
         return is_null($_type) ? $name : $name[$_type - 1];
     }
 
-    public static function format($_date)
+    public static function format($_date, $_trimYear = null)
     {
-        return
-            date('j ', $_date) .
-            String::toLower(self::getMonth(date('n', $_date), 2)) .
-            (date('Y') == date('Y', $_date) ? '' : date(' Y года', $_date));
+        $year = '';
+
+        if (
+            $_trimYear === true ||
+            ($_trimYear === null && date('Y') != date('Y', $_date))
+        ) {
+            $year = date(' Y года', $_date);
+        }
+
+        return date('j ', $_date) .
+               String::toLower(self::getMonth(date('n', $_date), 2)) .
+               $year;
     }
 
     public static function formatExpanded($_date,
@@ -121,19 +131,19 @@ class Date
 
         if ($_isHuman) {
             switch ($day) {
-                case $today - 60 * 60 * 24 * 2:
+                case $today - self::DAY_SEC * 2:
                     $result = 'Позавчера';
                     break;
-                case $today - 60 * 60 * 24:
+                case $today - self::DAY_SEC:
                     $result = 'Вчера';
                     break;
                 case $today:
                     $result = 'Сегодня';
                     break;
-                case $today + 60 * 60 * 24:
+                case $today + self::DAY_SEC:
                     $result = 'Завтра';
                     break;
-                case $today + 60 * 60 * 24 * 2:
+                case $today + self::DAY_SEC * 2:
                     $result = 'Послезавтра';
                     break;
                 default:
@@ -223,6 +233,14 @@ class Date
         return checkdate((int) $_month, (int) $_day, (int) $_year);
     }
 
+    public static function checkTime($_hour, $_minute)
+    {
+        $h = (int) $_hour;
+        $m = (int) $_minute;
+
+        return $h >= 0 && $h < 24 && $m >= 0 && $m < 60;
+    }
+
     public static function getXml($_date, $_node = null)
     {
         $attrs = array(
@@ -267,15 +285,14 @@ class Date
     public static function fromString($_value)
     {
         $value = trim($_value);
-        $todayNoon = mktime(12, 0, 0, date('m'), date('d'), date('Y'));
         $match = array();
 
         switch (String::toLower($value)) {
-            case 'позавчера':   return $todayNoon - 60 * 60 * 24 * 2;
-            case 'вчера':       return $todayNoon - 60 * 60 * 24;
-            case 'сегодня':     return $todayNoon;
-            case 'завтра':      return $todayNoon + 60 * 60 * 24;
-            case 'послезавтра': return $todayNoon + 60 * 60 * 24 * 2;
+            case 'позавчера':   return self::yesterday() - self::DAY_SEC;
+            case 'вчера':       return self::yesterday();
+            case 'сегодня':     return self::today();
+            case 'завтра':      return self::tomorrow();
+            case 'послезавтра': return self::tomorrow() + self::DAY_SEC;
         }
 
         preg_match(
@@ -431,9 +448,19 @@ class Date
         }
     }
 
+    public static function yesterday()
+    {
+        return self::today() - self::DAY_SEC;
+    }
+
     public static function today()
     {
         return mktime(0, 0, 0, date('n'), date('j'), date('Y'));
+    }
+
+    public static function tomorrow()
+    {
+        return self::today() + self::DAY_SEC;
     }
 
     public static function getMonthFirstDay($_date = null)
@@ -498,6 +525,6 @@ class Date
             date('Y', $till)
         );
 
-        return floor(($till - $from) / 86400);
+        return floor(($till - $from) / self::DAY_SEC);
     }
 }
