@@ -108,7 +108,6 @@ class Date
     {
         $date = getdate(self::getDate($_date));
         $day = mktime(0, 0, 0, $date['mon'], $date['mday'], $date['year']);
-        $today = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
 
         foreach (array('hours', 'minutes', 'seconds') as $item) {
             if (10 > $date[$item]) {
@@ -131,19 +130,19 @@ class Date
 
         if ($_isHuman) {
             switch ($day) {
-                case $today - self::DAY_SEC * 2:
+                case self::yesterday(self::yesterday()):
                     $result = 'Позавчера';
                     break;
-                case $today - self::DAY_SEC:
+                case self::yesterday():
                     $result = 'Вчера';
                     break;
-                case $today:
+                case self::today():
                     $result = 'Сегодня';
                     break;
-                case $today + self::DAY_SEC:
+                case self::tomorrow():
                     $result = 'Завтра';
                     break;
-                case $today + self::DAY_SEC * 2:
+                case self::tomorrow(self::tomorrow()):
                     $result = 'Послезавтра';
                     break;
                 default:
@@ -288,11 +287,11 @@ class Date
         $match = array();
 
         switch (String::toLower($value)) {
-            case 'позавчера':   return self::yesterday() - self::DAY_SEC;
+            case 'позавчера':   return self::yesterday(self::yesterday());
             case 'вчера':       return self::yesterday();
             case 'сегодня':     return self::today();
             case 'завтра':      return self::tomorrow();
-            case 'послезавтра': return self::tomorrow() + self::DAY_SEC;
+            case 'послезавтра': return self::tomorrow(self::tomorrow());
         }
 
         preg_match(
@@ -448,9 +447,9 @@ class Date
         }
     }
 
-    public static function yesterday()
+    public static function yesterday($_date = null)
     {
-        return self::today() - self::DAY_SEC;
+        return ($_date ?: self::today()) - self::DAY_SEC;
     }
 
     public static function today()
@@ -458,9 +457,9 @@ class Date
         return mktime(0, 0, 0, date('n'), date('j'), date('Y'));
     }
 
-    public static function tomorrow()
+    public static function tomorrow($_date = null)
     {
-        return self::today() + self::DAY_SEC;
+        return ($_date ?: self::today()) + self::DAY_SEC;
     }
 
     public static function getMonthFirstDay($_date = null)
