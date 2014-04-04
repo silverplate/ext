@@ -103,8 +103,8 @@ class Date
 
     public static function formatExpanded($_date,
                                           $_isHuman = true,
-                                          $_trimYear = 'auto',
-                                          $_isTime = 'auto')
+                                          $_trimYear = null,
+                                          $_isTime = null)
     {
         $date = getdate(self::getDate($_date));
         $day = mktime(0, 0, 0, $date['mon'], $date['mday'], $date['year']);
@@ -122,7 +122,7 @@ class Date
                String::toLower(self::getMonth($date['mon'], 2));
 
         if (
-            ('auto' == $_trimYear && date('Y') != $date['year']) &&
+            (null === $_trimYear && date('Y') != $date['year']) &&
             $_trimYear !== true
         ) {
             $dmy .= ' ' . $date['year'] . ' года';
@@ -154,7 +154,7 @@ class Date
         }
 
         if (
-            ('auto' == $_isTime && '00:00:00' != $hms) ||
+            (null === $_isTime && '00:00:00' != $hms) ||
             true === $_isTime
         ) {
             $result .= ' ' . $hm;
