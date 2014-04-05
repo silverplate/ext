@@ -64,13 +64,22 @@ class Xml
         );
     }
 
-    public static function cdata($_name, $_cdata = null, $_attrs = null)
+    public static function cdata($_name = null, $_cdata = null, $_attrs = null)
     {
         $cdata = is_null($_cdata) || $_cdata === ''
                ? null
                : '<![CDATA[' . static::encodeCdata($_cdata) . ']]>';
 
-        return static::node($_name, $cdata, $_attrs);
+        if ($_name === null) {
+            if (!empty($_attrs)) {
+                throw new \Exception('No name for CDATA container node');
+            }
+
+            return $cdata;
+
+        } else {
+            return static::node($_name, $cdata, $_attrs);
+        }
     }
 
     public static function notEmptyCdata($_name, $_value = null, $_attrs = null)
