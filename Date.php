@@ -5,6 +5,7 @@ namespace Ext;
 class Date
 {
     const DAY_SEC = 86400;
+    const WEEK_SEC = 604800;
 
     protected static $_months = array(
         'ru' => array(
