@@ -85,7 +85,7 @@ class File
             array('.', '..', '.DS_Store')
         );
 
-        return 0 == count(array_diff(scandir($_dir), $ignore));
+        return is_dir($_dir) && 0 == count(array_diff(scandir($_dir), $ignore));
     }
 
     /**
