@@ -77,6 +77,11 @@ class Date
         return self::$_daysOfTheWeek[$_lang];
     }
 
+    public static function getDayOfTheWeekFromSunday($_num, $_type = null, $_lang = 'ru')
+    {
+        return static::getDayOfTheWeek($_num == 0 ? 7 : $_num, $_type, $_lang);
+    }
+
     public static function getDayOfTheWeek($_num, $_type = null, $_lang = 'ru')
     {
         $number = (int) $_num;
