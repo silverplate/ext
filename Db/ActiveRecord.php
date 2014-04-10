@@ -782,7 +782,7 @@ class ActiveRecord extends \StdClass
     /**
      * @param array $_where
      * @param array $_params
-     * @return ActiveRecord[]|Model[]
+     * @return ActiveRecord[]
      */
     public static function fetchList($_where = null, $_params = array())
     {
