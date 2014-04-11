@@ -148,7 +148,7 @@ class Xml
         $xml = '<?xml version="1.0" encoding="utf-8"?>';
 
         if ($_dtd) {
-            $dtd = $_dtd === true ? dirname(__FILE__) . '/entities.dtd' : $_dtd;
+            $dtd = $_dtd === true ? dirname(__FILE__) . '/Xml/entities.dtd' : $_dtd;
 
             if (function_exists('isWindows') && isWindows()) {
                 $dtd = 'file:///' . str_replace('\\', '/', $dtd);
