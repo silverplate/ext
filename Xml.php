@@ -32,9 +32,9 @@ class Xml
         else if (is_array($_value)) $value = implode($_value);
         else                        $value = $_value;
 
-        if ($value) {
-            $value = static::removeControlCharacters($value);
-        }
+//        if ($value) {
+//            $value = static::removeControlCharacters($value);
+//        }
 
         return $xml . (empty($value) ? ' />' : ">$value</$name>");
     }
@@ -194,5 +194,17 @@ class Xml
     public static function getDocumentForXml($_xml, $_root = null, $_dtd = true)
     {
         return static::getHead($_dtd, empty($_root) ? 'root' : $_root) . $_xml;
+    }
+
+    public static function transform($_xml, $_tmpl)
+    {
+        $proc = new \XSLTProcessor;
+        $proc->importStylesheet(
+            $_tmpl instanceof \DOMDocument ? $_tmpl : Dom::get($_tmpl)
+        );
+
+        return $proc->transformToXml(Dom::get(
+            static::removeControlCharacters($_xml)
+        ));
     }
 }
