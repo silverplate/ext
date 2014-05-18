@@ -614,6 +614,10 @@ class File
         $result = parse_url($url);
         $result['request_uri'] = $serverRequestUri;
 
+        if (!array_key_exists('path', $result)) {
+            $result['path'] = '/';
+        }
+
         if (!isset($result['query'])) {
             $result['query'] = '';
         }
