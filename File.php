@@ -352,7 +352,7 @@ class File
                                       $_pathStart = null,
                                       $_uriStart = null)
     {
-        $uriStart  = is_null($_uriStart) ? '/' : $_uriStart;
+        $uriStart = is_null($_uriStart) ? '/' : $_uriStart;
 
         if ($_pathStart) {
             $pathStart = $_pathStart;
@@ -361,7 +361,7 @@ class File
             $pathStart = $_SERVER['DOCUMENT_ROOT'];
 
         } else {
-            throw new \Exception('Dont\'t know where is public folder.');
+            throw new \Exception('Dont\'t know there is public folder.');
         }
 
         if (substr($uriStart, strlen($uriStart) - 1) == '/') {
