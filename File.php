@@ -590,7 +590,7 @@ class File
                           : $_SERVER['REQUEST_URI'];
 
         if (is_null($_url)) {
-            $url = $serverRequestUri;
+            $url = $serverRequestUri ?: '/';
 
             if (!empty($_SERVER['QUERY_STRING'])) {
                 $url .= '?' . $_SERVER['QUERY_STRING'];
@@ -613,10 +613,6 @@ class File
         $url = implode('?', $tmp);
         $result = parse_url($url);
         $result['request_uri'] = $serverRequestUri;
-
-        if (!array_key_exists('path', $result)) {
-            $result['path'] = '/';
-        }
 
         if (!isset($result['query'])) {
             $result['query'] = '';
