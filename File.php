@@ -612,7 +612,12 @@ class File
 
         $url = implode('?', $tmp);
         $result = parse_url($url);
+
         $result['request_uri'] = $serverRequestUri;
+
+        if (!isset($result['path'])) {
+            $result['path'] = '/';
+        }
 
         if (!isset($result['query'])) {
             $result['query'] = '';
