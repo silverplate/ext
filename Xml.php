@@ -149,7 +149,8 @@ class Xml
 
         if ($_dtd) {
             $dtd = $_dtd === true
-                 ? 'http://dl.google.com/gwt/DTD/xhtml.ent'
+//                 ? 'http://dl.google.com/gwt/DTD/xhtml.ent'
+                 ? dirname(__FILE__) . '/Xml/entities.dtd'
                  : $_dtd;
 
             if (
