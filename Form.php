@@ -125,6 +125,15 @@ class Form extends \StdClass
         return $this->_groups[$_name];
     }
 
+    public function computeElementClassName($_type)
+    {
+        $master = '\\Ext\\Form\\Element';
+        $class = $master . '\\' . String::upperCase($_type);
+        if (!class_exists($class)) $class = $master;
+
+        return $class;
+    }
+
     /**
      * @param string $_name
      * @param string $_type
@@ -137,10 +146,7 @@ class Form extends \StdClass
                                   $_label = null,
                                   $_isRequired = false)
     {
-        $name = String::upperCase($_type);
-        $master = $class = '\\Ext\\Form\\Element';
-        $class = $master . '\\' . $name;
-        if (!class_exists($class)) $class = $master;
+        $class = $this->computeElementClassName($_type);
 
         $this->_elements[$_name] = new $class(
             $_name,
@@ -203,7 +209,7 @@ class Form extends \StdClass
 
     /**
      * @param string $_filePath
-     * @return self
+     * @return static
      */
     public static function load($_filePath)
     {

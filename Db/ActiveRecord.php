@@ -264,12 +264,13 @@ class ActiveRecord extends \StdClass
      * @param self $_instance
      * @return Attribute
      */
-    public function addForeign(ActiveRecord $_instance)
+    public function addForeign(ActiveRecord $_instance, $_name = null)
     {
+        $name = $_name ?: $key->getName();
         $key = $_instance->getPrimaryKey();
-        $this->_foreignInstances[$key->getName()] = $_instance;
+        $this->_foreignInstances[$name] = $_instance;
 
-        return $this->addAttr($key->getName(), $key->getType());
+        return $this->addAttr($name, $key->getType());
     }
 
     /**
@@ -643,7 +644,7 @@ class ActiveRecord extends \StdClass
         }
 
         return (bool) Db::get()->execute(
-            'UPDATE `' . $this->getTable() . '`' .
+            "UPDATE `{$this->_table}`" .
             Db::get()->getQueryFields($attrs, 'update', true) .
             'WHERE ' . $this->getPrimaryKeyWhere() . ' LIMIT 1'
         );
@@ -663,7 +664,7 @@ class ActiveRecord extends \StdClass
         $attrs = array($_name => $this->getAttr($_name)->getSqlValue());
 
         return (bool) Db::get()->execute(
-            'UPDATE `' . $this->getTable() . '`' .
+            "UPDATE `{$this->_table}`" .
             Db::get()->getQueryFields($attrs, 'update', true) .
             'WHERE ' . $this->getPrimaryKeyWhere() . ' LIMIT 1'
         );
@@ -935,7 +936,6 @@ class ActiveRecord extends \StdClass
 //                $class::getFirstForeignPri(),
 //                $class::getSecondForeignPri()
 //            );
-
             $keys = array(
                 call_user_func(array($class, 'getFirstForeignPri')),
                 call_user_func(array($class, 'getSecondForeignPri'))

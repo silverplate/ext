@@ -94,6 +94,10 @@ class Element
         }
     }
 
+    /**
+     * @param string $_name
+     * @return bool|string|array
+     */
     public function getValue($_name = null)
     {
         if (is_null($_name)) {
