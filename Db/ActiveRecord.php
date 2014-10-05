@@ -981,6 +981,13 @@ class ActiveRecord extends \StdClass
         return !empty($this->$_name) ? Date::getDate($this->$_name) : false;
     }
 
+    public function setDate($_name, $_value)
+    {
+        $date = Date::getDate($_value);
+        $this->$_name = date('Y-m-d H:i:s');
+        return $date;
+    }
+
     public function getXml($_node = null, $_xml = null, $_attrs = null)
     {
         $node = $_node ? $_node : String::dash($this->getTable());
