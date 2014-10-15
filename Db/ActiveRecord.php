@@ -261,13 +261,15 @@ class ActiveRecord extends \StdClass
     }
 
     /**
+     * Beware of recursion.
+     *
      * @param self $_instance
      * @return Attribute
      */
     public function addForeign(ActiveRecord $_instance, $_name = null)
     {
-        $name = $_name ?: $key->getName();
         $key = $_instance->getPrimaryKey();
+        $name = $_name ?: $key->getName();
         $this->_foreignInstances[$name] = $_instance;
 
         return $this->addAttr($name, $key->getType());
