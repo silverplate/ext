@@ -455,17 +455,36 @@ class Date
 
     public static function yesterday($_date = null)
     {
-        return ($_date ?: self::today()) - self::DAY_SEC;
+        $date = $_date ?: self::today();
+
+        return \mktime(
+            0, 0, 0,
+            (int) \date('n'),
+            (int) \date('j', $date) - 1,
+            (int) \date('Y')
+        );
     }
 
     public static function today()
     {
-        return mktime(0, 0, 0, date('n'), date('j'), date('Y'));
+        return \mktime(
+            0, 0, 0,
+            (int) \date('n'),
+            (int) \date('j'),
+            (int) \date('Y')
+        );
     }
 
     public static function tomorrow($_date = null)
     {
-        return ($_date ?: self::today()) + self::DAY_SEC;
+        $date = $_date ?: self::today();
+
+        return \mktime(
+            0, 0, 0,
+            (int) \date('n'),
+            (int) \date('j', $date) + 1,
+            (int) \date('Y')
+        );
     }
 
     public static function getMonthFirstDay($_date = null)
