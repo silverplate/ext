@@ -429,6 +429,11 @@ class Form extends \StdClass
         return $this->getUpdateStatus() == static::SUCCESS;
     }
 
+    public function isError()
+    {
+        return $this->getUpdateStatus() == static::ERROR;
+    }
+
     public function run()
     {
         if ($this->isSubmited()) {
