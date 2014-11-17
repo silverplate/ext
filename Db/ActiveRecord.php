@@ -796,9 +796,10 @@ class ActiveRecord extends \StdClass
             $instance->getTable(),
             null,
             $_where,
-            empty($_params['order']) ? $instance->getSortAttrName() : $_params['order'],
-            empty($_params['limit']) ? null : (int) $_params['limit'],
-            empty($_params['offset']) ? null : (int) $_params['offset']
+            empty($_params['order'])  ? $instance->getSortAttrName() : $_params['order'],
+            empty($_params['limit'])  ? null : (int) $_params['limit'],
+            empty($_params['offset']) ? null : (int) $_params['offset'],
+            empty($_params['group'])  ? null : $_params['group']
         ));
 
         foreach ($items as $item) {
