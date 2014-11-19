@@ -6,9 +6,9 @@ use \Ext\Form\Element;
 use \Ext\Xml;
 use \Ext\Date;
 
-class DatetimePeriod extends Element
+class TimePeriod extends Element
 {
-    protected $_names = array('date', 'hour', 'minute');
+    protected $_names = array('hour', 'minute');
 
     protected function _getPrefixes()
     {
@@ -58,13 +58,11 @@ class DatetimePeriod extends Element
             $value = array();
 
             if ($from) {
-                $value['from_date']   = date('Y-m-d', $from);
                 $value['from_hour']   = date('H', $from);
                 $value['from_minute'] = date('i', $from);
             }
 
             if ($till) {
-                $value['till_date']   = date('Y-m-d', $till);
                 $value['till_hour']   = date('H', $till);
                 $value['till_minute'] = date('i', $till);
             }
@@ -124,9 +122,7 @@ class DatetimePeriod extends Element
             return static::NO_UPDATE;
 
         } else if (
-            (empty($value['from_date']) || Date::getDate($value['from_date'])) &&
             Date::checkTime($value['from_hour'], $value['from_minute']) &&
-            (empty($value['till_date']) || Date::getDate($value['till_date'])) &&
             Date::checkTime($value['till_hour'], $value['till_minute'])
         ) {
             return static::SUCCESS;
@@ -146,14 +142,14 @@ class DatetimePeriod extends Element
                 $this->getName() . '_till' => ''
             );
 
-            if (!empty($v['from_date'])) {
+            if (!empty($v['from_hour'])) {
                 $values[$this->getName() . '_from'] =
-                    "{$v['from_date']} {$v['from_hour']}:{$v['from_minute']}:00";
+                    $v['from_hour'] . ':' . $v['from_minute'];
             }
 
-            if (!empty($v['till_date'])) {
+            if (!empty($v['till_hour'])) {
                 $values[$this->getName() . '_till'] =
-                    "{$v['till_date']} {$v['till_hour']}:{$v['till_minute']}:00";
+                    $v['till_hour'] . ':' . $v['till_minute'];
             }
 
             return $values;
