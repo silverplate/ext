@@ -170,9 +170,9 @@ class Element
     public function initErrorStatuses()
     {
         $this->_errorStatuses = array(
-            static::ERROR_SPELLING => 'Некорректное значение.',
-            static::ERROR_REQUIRED => 'Поле обязательно для&nbsp;заполнения.',
-            static::ERROR_EXIST    => 'Значение уже&nbsp;используется.'
+            static::ERROR_SPELLING => 'Некорректное значение',
+            static::ERROR_REQUIRED => 'Поле обязательно для&nbsp;заполнения',
+            static::ERROR_EXIST    => 'Значение уже&nbsp;используется'
         );
     }
 
