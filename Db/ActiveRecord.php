@@ -615,7 +615,7 @@ class ActiveRecord extends \StdClass
             $lastId = Db::get()->getLastInsertedId();
 
             if ($lastId) {
-                $this->id = $lastId;
+                if (!$this->id) $this->id = $lastId;
 
                 if (
                     $this->hasAttr('sort_order') &&
@@ -987,7 +987,7 @@ class ActiveRecord extends \StdClass
     public function setDate($_name, $_value)
     {
         $date = Date::getDate($_value);
-        $this->$_name = date('Y-m-d H:i:s');
+        $this->$_name = date('Y-m-d H:i:s', $date);
         return $date;
     }
 
