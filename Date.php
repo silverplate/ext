@@ -159,11 +159,9 @@ class Date
             $result = $dmy;
         }
 
-        if (
-            (null === $_isTime && '00:00:00' != $hms) ||
-            true === $_isTime
-        ) {
-            $result .= ' ' . $hm;
+        if ((null === $_isTime && '00:00:00' != $hms) || true === $_isTime) {
+            if ($_isHuman && $day == self::today()) $result = $hm;
+            else                                    $result .= ' ' . $hm;
         }
 
         return $result;
