@@ -549,11 +549,9 @@ class ActiveRecord extends \StdClass
      */
     public function fillWithData(array $_data)
     {
-        foreach ($this->_attributes as $item) {
-            if (array_key_exists($item->getName(), $_data)) {
+        foreach ($this->_attributes as $item)
+            if (array_key_exists($item->getName(), $_data))
                 $item->setValue($_data[$item->getName()]);
-            }
-        }
     }
 
     /**

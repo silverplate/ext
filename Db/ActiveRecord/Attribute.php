@@ -33,6 +33,9 @@ class Attribute
 
     public function setValue($_val)
     {
+        if (!is_scalar($_val))
+            return false;
+
         switch ($this->_type) {
             case 'integer':
                 $this->_value = (string) $_val == '' ? $_val : (int) $_val;
