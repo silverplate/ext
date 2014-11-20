@@ -98,9 +98,9 @@ class TimePeriod extends Element
     {
         $value = array();
 
-        foreach ($this->_getPrefixes() as $prefix) {
-            foreach ($this->_names as $name) {
-                foreach ($this->_getTypes() as $type) {
+        foreach ($this->_getPrefixes() as $prefix)
+            foreach ($this->_names as $name)
+                foreach ($this->_getTypes() as $type)
                     foreach (array('_', '-') as $item) {
                         $key = $prefix . $type . $item . $name;
 
@@ -108,9 +108,6 @@ class TimePeriod extends Element
                             $value[$type . '_' . $name] = $_value[$key];
                         }
                     }
-                }
-            }
-        }
 
         if (
             $this->isRequired() &&
