@@ -485,25 +485,37 @@ class Date
         );
     }
 
+    public static function getDayEnd($_date = null)
+    {
+        $date = $_date ?: self::today();
+
+        return \mktime(
+            23, 59, 59,
+            (int) \date('n', $date),
+            (int) \date('j', $date),
+            (int) \date('Y', $date)
+        );
+    }
+
     public static function getMonthFirstDay($_date = null)
     {
         $date = static::getDate($_date);
-        return mktime(0, 0, 0, date('m', $date), 1, date('Y', $date));
+        return \mktime(0, 0, 0, \date('m', $date), 1, \date('Y', $date));
     }
 
     public static function getMonthLastDay($_date = null)
     {
         $date = static::getDate($_date);
-        return mktime(
+        return \mktime(
             23, 59, 59,
-            date('m', $date), date('t', $date), date('Y', $date)
+            date('m', $date), date('t', $date), \date('Y', $date)
         );
     }
 
     public static function getPreviousMonth($_date = null)
     {
         $date = static::getDate($_date);
-        return mktime(0, 0, 0, date('m', $date), 0, date('Y', $date));
+        return mktime(0, 0, 0, \date('m', $date), 0, \date('Y', $date));
     }
 
     public static function getNextMonth($_date = null)
@@ -511,22 +523,22 @@ class Date
         $date = static::getDate($_date);
         return mktime(
             0, 0, 0,
-            date('m', $date),
-            date('t', $date) + 1,
-            date('Y', $date)
+            \date('m', $date),
+            \date('t', $date) + 1,
+            \date('Y', $date)
         );
     }
 
     public static function getWeekStart($_date = null)
     {
         $date = static::getDate($_date);
-        return date('N', $date) == 1 ? $date : strtotime('last Monday', $date);
+        return \date('N', $date) == 1 ? $date : strtotime('last Monday', $date);
     }
 
     public static function getWeekEnd($_date = null)
     {
         $date = static::getDate($_date);
-        return date('N', $date) == 7 ? $date : strtotime('next Sunday', $date);
+        return \date('N', $date) == 7 ? $date : strtotime('next Sunday', $date);
     }
 
     public static function daysDiff($_from, $_till)
@@ -534,17 +546,17 @@ class Date
         $from = static::getDate($_from);
         $from = mktime(
             0, 0, 0,
-            date('n', $from),
-            date('j', $from),
-            date('Y', $from)
+            \date('n', $from),
+            \date('j', $from),
+            \date('Y', $from)
         );
 
         $till = static::getDate($_till);
         $till = mktime(
             0, 0, 0,
-            date('n', $till),
-            date('j', $till),
-            date('Y', $till)
+            \date('n', $till),
+            \date('j', $till),
+            \date('Y', $till)
         );
 
         return floor(($till - $from) / self::DAY_SEC);
