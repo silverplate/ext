@@ -598,6 +598,9 @@ class ActiveRecord extends \StdClass
                     } else {
                         $item->setValue(date('Y-m-d H:i:s'));
                     }
+
+                } else if (strpos($item->getName(), 'is_') === 0) {
+                    $item->setValue(0);
                 }
             }
 
