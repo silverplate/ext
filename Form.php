@@ -235,15 +235,13 @@ class Form extends \StdClass
                 $title = Dom::getChildByName($group, 'title');
                 $form->createGroup($name, $title ? $title->nodeValue : null);
 
-                foreach ($xpath->query('element', $group) as $element) {
+                foreach ($xpath->query('element', $group) as $element)
                     $form->createElementByDom($element, $name);
-                }
             }
 
         } else {
-            foreach ($xpath->query('element') as $item) {
+            foreach ($xpath->query('element') as $item)
                 $form->createElementByDom($item);
-            }
         }
 
         /** @var \DOMElement $item */

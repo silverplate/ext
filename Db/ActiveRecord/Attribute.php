@@ -33,7 +33,7 @@ class Attribute
 
     public function setValue($_val)
     {
-        if (!is_scalar($_val))
+        if (!is_scalar($_val) && $_val !== null)
             return false;
 
         switch ($this->_type) {
