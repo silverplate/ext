@@ -49,6 +49,8 @@ class Date
 
     public static function getMonth($_number, $_type = null, $_lang = 'ru')
     {
+        if ($_number > 12 || $_number < 1) return false;
+
         $number = (int) $_number;
         $names = self::getMonths($_lang);
         $name = $names[$number - 1];
