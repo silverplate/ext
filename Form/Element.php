@@ -457,7 +457,7 @@ class Element
 
         if (is_array($_value)) {
             foreach ($_value as $key => $value) {
-                $node = preg_match('/^[a-z]/', $key) ? $key : 'item';
+                $node = preg_match('/^[a-z_-]+$/', $key) ? $key : 'item';
                 $attrs = $node == 'item' ? array('key' => $key) : null;
 
                 if (is_array($value)) {
