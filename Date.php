@@ -246,9 +246,19 @@ class Date
         return $h >= 0 && $h < 24 && $m >= 0 && $m < 60;
     }
 
-    public static function getXml($_date, $_node = null)
+    public static function getXml($_date,
+                                  $_node = null,
+                                  $_xml = null,
+                                  $_attrs = null)
     {
-        $attrs = array(
+        if (empty($_xml))         $xml = [];
+        else if (is_array($_xml)) $xml = $_xml;
+        else                      $xml = [$_xml];
+
+        Xml::append($xml, Xml::cdata('full', self::format($_date)));
+        Xml::append($xml, Xml::cdata('human', self::formatExpanded($_date)));
+
+        $attrs = array_merge(empty($_attrs) ? [] : $_attrs, [
             'unixtimestamp' => $_date,
             'day' => date('d', $_date),
             'day-zeroless' => date('j', $_date),
@@ -256,7 +266,7 @@ class Date
             'year' => date('Y', $_date),
             'date' => date('d.m.Y', $_date),
             'sql-date' => date('Y-m-d', $_date)
-        );
+        ]);
 
         if (
             (int) date('H', $_date) ||
@@ -264,18 +274,14 @@ class Date
             (int) date('s', $_date)
         ) {
             $attrs['hour'] = date('H', $_date);
+            $attrs['hour-zeroless'] = date('G', $_date);
             $attrs['minute'] = date('i', $_date);
             $attrs['second'] = date('s', $_date);
             $attrs['time'] = date('H:i', $_date);
             $attrs['sql-date-time'] = date('Y-m-d H:i:s', $_date);
         }
 
-        return Xml::node(
-            $_node ? $_node : 'date',
-            Xml::cdata('full', self::format($_date)) .
-            Xml::cdata('human', self::formatExpanded($_date)),
-            $attrs
-        );
+        return Xml::node($_node ?: 'date', $xml, $attrs);
     }
 
     /**

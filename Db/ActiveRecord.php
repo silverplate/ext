@@ -1000,15 +1000,13 @@ class ActiveRecord extends \StdClass
         else if (is_array($_xml)) $xml = $_xml;
         else                      $xml = array($_xml);
 
-        if (!array_key_exists('title', $xml)) {
+        if (!array_key_exists('title', $xml))
             Xml::append($xml, Xml::cdata('title', $this->getTitle()));
-        }
 
         $attrs = empty($_attrs) ? array() : $_attrs;
 
-        if (!array_key_exists('id', $attrs)) {
+        if (!array_key_exists('id', $attrs))
             $attrs['id'] = $this->id;
-        }
 
         return Xml::node($node, $xml, $attrs);
     }
