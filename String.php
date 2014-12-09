@@ -180,9 +180,7 @@ class String
 
     public static function getPart($_string, $_start, $_length = null)
     {
-        return $_length
-             ? mb_substr($_string, $_start, $_length)
-             : mb_substr($_string, $_start);
+        return mb_substr($_string, $_start, $_length);
     }
 
     public static function getRandom($_length = 8)
