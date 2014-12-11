@@ -8,7 +8,7 @@ class Xml
 {
     public static function normalize($_name)
     {
-        return String::dash($_name);
+        return String::dash($_name, ['_', '-', '\\']);
     }
 
     public static function node($_name, $_value = null, $_attrs = null)
