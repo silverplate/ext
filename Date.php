@@ -128,8 +128,8 @@ class Date
                String::toLower(self::getMonth($date['mon'], 2));
 
         if (
-            (null === $_trimYear && date('Y') != $date['year']) &&
-            $_trimYear !== true
+            (null === $_trimYear && date('Y') != $date['year']) ||
+            $_trimYear === false
         ) {
             $dmy .= ' ' . $date['year'] . ' года';
         }
