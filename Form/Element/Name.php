@@ -12,7 +12,10 @@ class Name extends Element
         $prefixes = array('', $this->getName() . '_');
 
         foreach ($prefixes as $prefix) {
-            foreach (array('last_name', 'first_name', 'middle_name') as $name) {
+            foreach (
+                ['last_name', 'first_name', 'middle_name', 'patronymic_name'] as
+                $name
+            ) {
                 if (isset($_data[$prefix . $name])) {
                     $value[$name] = $_data[$prefix . $name];
                 }
@@ -37,7 +40,8 @@ class Name extends Element
         } else if (
             !isset($_value['first_name']) &&
             !isset($_value['last_name']) &&
-            !isset($_value['middle_name'])
+            !isset($_value['middle_name']) &&
+            !isset($_value['patronymic_name'])
         ) {
             return static::NO_UPDATE;
 

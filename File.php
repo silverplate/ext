@@ -592,9 +592,9 @@ class File
         if (is_null($_url)) {
             $url = $serverRequestUri ?: '/';
 
-            if (!empty($_SERVER['QUERY_STRING'])) {
-                $url .= '?' . $_SERVER['QUERY_STRING'];
-            }
+//            if (!empty($_SERVER['QUERY_STRING'])) {
+//                $url .= '?' . $_SERVER['QUERY_STRING'];
+//            }
 
         } else {
             $url = $_url;

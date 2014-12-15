@@ -158,6 +158,23 @@ class Form extends \StdClass
         return $this->_elements[$_name];
     }
 
+    public function orderElementAfter($_name, $_after)
+    {
+        $move = $this->_elements[$_name];
+        $tmp = [];
+
+        foreach ($this->_elements as $name => $element) {
+            if ($name == $_name) continue;
+
+            $tmp[$name] = $element;
+
+            if ($name == $_after)
+                $tmp[$_name] = $move;
+        }
+
+        $this->_elements = $tmp;
+    }
+
     public function delete($_name)
     {
         $name = $this->computeInnerName($_name);
@@ -235,15 +252,13 @@ class Form extends \StdClass
                 $title = Dom::getChildByName($group, 'title');
                 $form->createGroup($name, $title ? $title->nodeValue : null);
 
-                foreach ($xpath->query('element', $group) as $element) {
+                foreach ($xpath->query('element', $group) as $element)
                     $form->createElementByDom($element, $name);
-                }
             }
 
         } else {
-            foreach ($xpath->query('element') as $item) {
+            foreach ($xpath->query('element') as $item)
                 $form->createElementByDom($item);
-            }
         }
 
         /** @var \DOMElement $item */
@@ -427,6 +442,11 @@ class Form extends \StdClass
     public function isSuccess()
     {
         return $this->getUpdateStatus() == static::SUCCESS;
+    }
+
+    public function isError()
+    {
+        return $this->getUpdateStatus() == static::ERROR;
     }
 
     public function run()

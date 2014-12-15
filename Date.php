@@ -49,6 +49,8 @@ class Date
 
     public static function getMonth($_number, $_type = null, $_lang = 'ru')
     {
+        if ($_number > 12 || $_number < 1) return false;
+
         $number = (int) $_number;
         $names = self::getMonths($_lang);
         $name = $names[$number - 1];
@@ -159,11 +161,9 @@ class Date
             $result = $dmy;
         }
 
-        if (
-            (null === $_isTime && '00:00:00' != $hms) ||
-            true === $_isTime
-        ) {
-            $result .= ' ' . $hm;
+        if ((null === $_isTime && '00:00:00' != $hms) || true === $_isTime) {
+            if ($_isHuman && $day == self::today()) $result = $hm;
+            else                                    $result .= ' ' . $hm;
         }
 
         return $result;
@@ -246,9 +246,19 @@ class Date
         return $h >= 0 && $h < 24 && $m >= 0 && $m < 60;
     }
 
-    public static function getXml($_date, $_node = null)
+    public static function getXml($_date,
+                                  $_node = null,
+                                  $_xml = null,
+                                  $_attrs = null)
     {
-        $attrs = array(
+        if (empty($_xml))         $xml = [];
+        else if (is_array($_xml)) $xml = $_xml;
+        else                      $xml = [$_xml];
+
+        Xml::append($xml, Xml::cdata('full', self::format($_date)));
+        Xml::append($xml, Xml::cdata('human', self::formatExpanded($_date)));
+
+        $attrs = array_merge(empty($_attrs) ? [] : $_attrs, [
             'unixtimestamp' => $_date,
             'day' => date('d', $_date),
             'day-zeroless' => date('j', $_date),
@@ -256,7 +266,7 @@ class Date
             'year' => date('Y', $_date),
             'date' => date('d.m.Y', $_date),
             'sql-date' => date('Y-m-d', $_date)
-        );
+        ]);
 
         if (
             (int) date('H', $_date) ||
@@ -264,18 +274,14 @@ class Date
             (int) date('s', $_date)
         ) {
             $attrs['hour'] = date('H', $_date);
+            $attrs['hour-zeroless'] = date('G', $_date);
             $attrs['minute'] = date('i', $_date);
             $attrs['second'] = date('s', $_date);
             $attrs['time'] = date('H:i', $_date);
             $attrs['sql-date-time'] = date('Y-m-d H:i:s', $_date);
         }
 
-        return Xml::node(
-            $_node ? $_node : 'date',
-            Xml::cdata('full', self::format($_date)) .
-            Xml::cdata('human', self::formatExpanded($_date)),
-            $attrs
-        );
+        return Xml::node($_node ?: 'date', $xml, $attrs);
     }
 
     /**
@@ -455,38 +461,69 @@ class Date
 
     public static function yesterday($_date = null)
     {
-        return ($_date ?: self::today()) - self::DAY_SEC;
+        $date = $_date ?: self::today();
+
+        return \mktime(
+            0, 0, 0,
+            (int) \date('n'),
+            (int) \date('j', $date) - 1,
+            (int) \date('Y')
+        );
     }
 
     public static function today()
     {
-        return mktime(0, 0, 0, date('n'), date('j'), date('Y'));
+        return \mktime(
+            0, 0, 0,
+            (int) \date('n'),
+            (int) \date('j'),
+            (int) \date('Y')
+        );
     }
 
     public static function tomorrow($_date = null)
     {
-        return ($_date ?: self::today()) + self::DAY_SEC;
+        $date = $_date ?: self::today();
+
+        return \mktime(
+            0, 0, 0,
+            (int) \date('n'),
+            (int) \date('j', $date) + 1,
+            (int) \date('Y')
+        );
+    }
+
+    public static function getDayEnd($_date = null)
+    {
+        $date = $_date ?: self::today();
+
+        return \mktime(
+            23, 59, 59,
+            (int) \date('n', $date),
+            (int) \date('j', $date),
+            (int) \date('Y', $date)
+        );
     }
 
     public static function getMonthFirstDay($_date = null)
     {
         $date = static::getDate($_date);
-        return mktime(0, 0, 0, date('m', $date), 1, date('Y', $date));
+        return \mktime(0, 0, 0, \date('m', $date), 1, \date('Y', $date));
     }
 
     public static function getMonthLastDay($_date = null)
     {
         $date = static::getDate($_date);
-        return mktime(
+        return \mktime(
             23, 59, 59,
-            date('m', $date), date('t', $date), date('Y', $date)
+            date('m', $date), date('t', $date), \date('Y', $date)
         );
     }
 
     public static function getPreviousMonth($_date = null)
     {
         $date = static::getDate($_date);
-        return mktime(0, 0, 0, date('m', $date), 0, date('Y', $date));
+        return mktime(0, 0, 0, \date('m', $date), 0, \date('Y', $date));
     }
 
     public static function getNextMonth($_date = null)
@@ -494,22 +531,22 @@ class Date
         $date = static::getDate($_date);
         return mktime(
             0, 0, 0,
-            date('m', $date),
-            date('t', $date) + 1,
-            date('Y', $date)
+            \date('m', $date),
+            \date('t', $date) + 1,
+            \date('Y', $date)
         );
     }
 
     public static function getWeekStart($_date = null)
     {
         $date = static::getDate($_date);
-        return date('N', $date) == 1 ? $date : strtotime('last Monday', $date);
+        return \date('N', $date) == 1 ? $date : strtotime('last Monday', $date);
     }
 
     public static function getWeekEnd($_date = null)
     {
         $date = static::getDate($_date);
-        return date('N', $date) == 7 ? $date : strtotime('next Sunday', $date);
+        return \date('N', $date) == 7 ? $date : strtotime('next Sunday', $date);
     }
 
     public static function daysDiff($_from, $_till)
@@ -517,17 +554,17 @@ class Date
         $from = static::getDate($_from);
         $from = mktime(
             0, 0, 0,
-            date('n', $from),
-            date('j', $from),
-            date('Y', $from)
+            \date('n', $from),
+            \date('j', $from),
+            \date('Y', $from)
         );
 
         $till = static::getDate($_till);
         $till = mktime(
             0, 0, 0,
-            date('n', $till),
-            date('j', $till),
-            date('Y', $till)
+            \date('n', $till),
+            \date('j', $till),
+            \date('Y', $till)
         );
 
         return floor(($till - $from) / self::DAY_SEC);

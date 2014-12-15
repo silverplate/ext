@@ -364,7 +364,8 @@ class Mysqli extends \Mysqli
             if (Number::isInteger($name)) {
                 $where[] = $value;
 
-            } else if ($value === 'NULL' || empty($value)) {
+//            } else if ($value === 'NULL' || empty($value)) {
+            } else if ($value === null || $value === 'NULL' || $value === '') {
                 $where[] = "($comp1($name) OR $name $comp3 '')";
 
             } else if (is_array($value)) {

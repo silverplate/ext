@@ -4,19 +4,24 @@ namespace Ext;
 
 class String
 {
-    protected static function _split($_string)
+    /**
+     * @param $_string
+     * @param array $_separators
+     * @return array
+     */
+    protected static function _split($_string, array $_separators = null)
     {
         $res = array('');
         $lc = strtolower($_string);
         $uc = strtoupper($_string);
-        $sep = array('_', '-', ':', '\\');
+        $sep = $_separators ?: array('_', '-', ':', '\\');
 
         for ($j = 0, $len = strlen($_string), $i = 0; $i < $len; $i++) {
             $s = $_string{$i};
 
             if (
                 !empty($res[$j]) &&
-                (in_array($s, $sep) || ($s == $uc{$i} && !is_numeric($s)))
+                (in_array($s, $sep) || ($s == $uc{$i} && ctype_alpha($s)))
             ) {
                 $res[++$j] = '';
             }
@@ -35,14 +40,24 @@ class String
         return $_isLcFirst ? lcfirst($res) : $res;
     }
 
-    public static function underline($_string)
+    /**
+     * @param $_string
+     * @param array $_separators
+     * @return string
+     */
+    public static function underline($_string, array $_separators = null)
     {
-        return implode('_', static::_split($_string));
+        return implode('_', static::_split($_string, $_separators));
     }
 
-    public static function dash($_string)
+    /**
+     * @param $_string
+     * @param array $_separators
+     * @return string
+     */
+    public static function dash($_string, array $_separators = null)
     {
-        return implode('-', static::_split($_string));
+        return implode('-', static::_split($_string, $_separators));
     }
 
     /**
@@ -180,9 +195,7 @@ class String
 
     public static function getPart($_string, $_start, $_length = null)
     {
-        return $_length
-             ? mb_substr($_string, $_start, $_length)
-             : mb_substr($_string, $_start);
+        return mb_substr($_string, $_start, $_length);
     }
 
     public static function getRandom($_length = 8)

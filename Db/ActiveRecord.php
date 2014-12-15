@@ -261,13 +261,15 @@ class ActiveRecord extends \StdClass
     }
 
     /**
+     * Beware of recursion.
+     *
      * @param self $_instance
      * @return Attribute
      */
     public function addForeign(ActiveRecord $_instance, $_name = null)
     {
-        $name = $_name ?: $key->getName();
         $key = $_instance->getPrimaryKey();
+        $name = $_name ?: $key->getName();
         $this->_foreignInstances[$name] = $_instance;
 
         return $this->addAttr($name, $key->getType());
@@ -547,11 +549,9 @@ class ActiveRecord extends \StdClass
      */
     public function fillWithData(array $_data)
     {
-        foreach ($this->_attributes as $item) {
-            if (array_key_exists($item->getName(), $_data)) {
+        foreach ($this->_attributes as $item)
+            if (array_key_exists($item->getName(), $_data))
                 $item->setValue($_data[$item->getName()]);
-            }
-        }
     }
 
     /**
@@ -598,6 +598,9 @@ class ActiveRecord extends \StdClass
                     } else {
                         $item->setValue(date('Y-m-d H:i:s'));
                     }
+
+                } else if (strpos($item->getName(), 'is_') === 0) {
+                    $item->setValue(0);
                 }
             }
 
@@ -613,7 +616,7 @@ class ActiveRecord extends \StdClass
             $lastId = Db::get()->getLastInsertedId();
 
             if ($lastId) {
-                $this->id = $lastId;
+                if (!$this->id) $this->id = $lastId;
 
                 if (
                     $this->hasAttr('sort_order') &&
@@ -794,9 +797,10 @@ class ActiveRecord extends \StdClass
             $instance->getTable(),
             null,
             $_where,
-            empty($_params['order']) ? $instance->getSortAttrName() : $_params['order'],
-            empty($_params['limit']) ? null : (int) $_params['limit'],
-            empty($_params['offset']) ? null : (int) $_params['offset']
+            empty($_params['order'])  ? $instance->getSortAttrName() : $_params['order'],
+            empty($_params['limit'])  ? null : (int) $_params['limit'],
+            empty($_params['offset']) ? null : (int) $_params['offset'],
+            empty($_params['group'])  ? null : $_params['group']
         ));
 
         foreach ($items as $item) {
@@ -984,7 +988,7 @@ class ActiveRecord extends \StdClass
     public function setDate($_name, $_value)
     {
         $date = Date::getDate($_value);
-        $this->$_name = date('Y-m-d H:i:s');
+        $this->$_name = date('Y-m-d H:i:s', $date);
         return $date;
     }
 
@@ -996,15 +1000,13 @@ class ActiveRecord extends \StdClass
         else if (is_array($_xml)) $xml = $_xml;
         else                      $xml = array($_xml);
 
-        if (!array_key_exists('title', $xml)) {
+        if (!array_key_exists('title', $xml))
             Xml::append($xml, Xml::cdata('title', $this->getTitle()));
-        }
 
         $attrs = empty($_attrs) ? array() : $_attrs;
 
-        if (!array_key_exists('id', $attrs)) {
+        if (!array_key_exists('id', $attrs))
             $attrs['id'] = $this->id;
-        }
 
         return Xml::node($node, $xml, $attrs);
     }

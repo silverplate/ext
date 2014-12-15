@@ -8,7 +8,7 @@ class Xml
 {
     public static function normalize($_name)
     {
-        return String::dash($_name);
+        return String::dash($_name, ['_', '-', '\\']);
     }
 
     public static function node($_name, $_value = null, $_attrs = null)
@@ -28,7 +28,7 @@ class Xml
             }
         }
 
-        if (empty($_value))         $value = '';
+        if ($_value === '')         $value = '';
         else if (is_array($_value)) $value = implode($_value);
         else                        $value = $_value;
 
@@ -36,12 +36,15 @@ class Xml
 //            $value = static::removeControlCharacters($value);
 //        }
 
-        return $xml . (empty($value) ? ' />' : ">$value</$name>");
+        return $xml . ($value === '' ? ' />' : ">$value</$name>");
     }
 
     public static function notEmptyNode($_name, $_value = null, $_attrs = null)
     {
-        return empty($_value) && empty($_attrs)
+        $isEmptyAttrs = 1;
+        if ($_attrs) foreach ($_attrs as $value) if ($value) $isEmptyAttrs = 0;
+
+        return empty($_value) && $isEmptyAttrs
              ? ''
              : static::node($_name, $_value, $_attrs);
     }
@@ -84,7 +87,10 @@ class Xml
 
     public static function notEmptyCdata($_name, $_value = null, $_attrs = null)
     {
-        return empty($_value) && empty($_attrs)
+        $isEmptyAttrs = 1;
+        if ($_attrs) foreach ($_attrs as $value) if ($value) $isEmptyAttrs = 0;
+
+        return empty($_value) && $isEmptyAttrs
              ? ''
              : static::cdata($_name, $_value, $_attrs);
     }
