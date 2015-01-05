@@ -261,16 +261,22 @@ class Form extends \StdClass
                 $form->createElementByDom($item);
         }
 
-        /** @var \DOMElement $item */
-        foreach ($xpath->query('button') as $item) {
-            $form->createButton(
-                Dom::getChildByName($item, 'label')->nodeValue,
-                $item->getAttribute('name'),
-                $item->getAttribute('type')
-            );
-        }
+        foreach ($xpath->query('button') as $item)
+            $form->createButtonByDom($item);
 
         return $form;
+    }
+
+    /**
+     * @param \DOMElement $_button
+     */
+    public function createButtonByDom($_button)
+    {
+        $this->createButton(
+            Dom::getChildByName($_button, 'label')->nodeValue,
+            $_button->getAttribute('name'),
+            $_button->getAttribute('type')
+        );
     }
 
     /**
