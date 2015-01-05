@@ -674,19 +674,28 @@ class ActiveRecord extends \StdClass
     }
 
     /**
+     * @param array $_items
+     */
+    protected function _deleteFiles($_items)
+    {
+        if (is_array($_items)) {
+            foreach ($_items as $item) {
+                if (is_array($item)) $this->_deleteFiles($item);
+                else if ($item instanceof File) $item->delete();
+            }
+        }
+    }
+
+    /**
      * @return bool
      */
     public function delete()
     {
-        if (isset($this->_links)) {
-            foreach (array_keys($this->_links) as $item) {
+        if (isset($this->_links))
+            foreach (array_keys($this->_links) as $item)
                 $this->updateLinks($item);
-            }
-        }
 
-        foreach ($this->getFiles() as $item) {
-            $item->delete();
-        }
+        $this->_deleteFiles($this->getFiles());
 
         return (bool) Db::get()->execute(
             "DELETE FROM `{$this->_table}` WHERE " .
