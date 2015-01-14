@@ -6,6 +6,8 @@ use \Ext\Xml;
 
 class Group
 {
+    use OrderElementTrait;
+
     /** @var string */
     protected $_name;
 

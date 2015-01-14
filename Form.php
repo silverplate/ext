@@ -9,6 +9,8 @@ use \Ext\Xml\Dom;
 
 class Form extends \StdClass
 {
+    use Form\OrderElementTrait;
+
     const NO_UPDATE   = 'no-update';
     const SUCCESS     = 'success';
     const ERROR       = 'error';
@@ -156,23 +158,6 @@ class Form extends \StdClass
         );
 
         return $this->_elements[$_name];
-    }
-
-    public function orderElementAfter($_name, $_after)
-    {
-        $move = $this->_elements[$_name];
-        $tmp = [];
-
-        foreach ($this->_elements as $name => $element) {
-            if ($name == $_name) continue;
-
-            $tmp[$name] = $element;
-
-            if ($name == $_after)
-                $tmp[$_name] = $move;
-        }
-
-        $this->_elements = $tmp;
     }
 
     public function delete($_name)
