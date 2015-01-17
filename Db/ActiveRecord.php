@@ -235,6 +235,14 @@ class ActiveRecord extends \StdClass
         return $this->_attributes[$_name];
     }
 
+    /**
+     * @param $_name
+     */
+    public function deleteAttr($_name)
+    {
+        unset($this->_attributes[$_name]);
+    }
+
     /*
      * @param string $_name
      * @param string $_type
