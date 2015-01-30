@@ -465,9 +465,9 @@ class Date
 
         return \mktime(
             0, 0, 0,
-            (int) \date('n'),
+            (int) \date('n', $date),
             (int) \date('j', $date) - 1,
-            (int) \date('Y')
+            (int) \date('Y', $date)
         );
     }
 
@@ -487,9 +487,9 @@ class Date
 
         return \mktime(
             0, 0, 0,
-            (int) \date('n'),
+            (int) \date('n', $date),
             (int) \date('j', $date) + 1,
-            (int) \date('Y')
+            (int) \date('Y', $date)
         );
     }
 
