@@ -88,7 +88,7 @@ class Image extends File
             $attrs = array_merge($attrs, $_attrs);
         }
 
-        $xml = is_array($_xml) ? $_xml : array();
+        $xml = is_array($_xml) ? $_xml : array($_xml);
 
         if ($this->getText()) {
             $xml[] = Xml::cdata('text', $this->getText());
