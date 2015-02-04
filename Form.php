@@ -211,7 +211,7 @@ class Form extends \StdClass
 
     /**
      * @param string $_filePath
-     * @return static
+     * @return self
      */
     public static function load($_filePath)
     {
