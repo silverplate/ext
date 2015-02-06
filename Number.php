@@ -38,7 +38,10 @@ class Number
 
     public static function isNumber($_number)
     {
-        return static::isInteger($_number) || static::isFloat($_number);
+        return strlen($_number) < 12 && (
+            static::isInteger($_number) ||
+            static::isFloat($_number)
+        );
     }
 
     public static function format($_number, $_decimals = null)
