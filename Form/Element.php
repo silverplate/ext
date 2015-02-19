@@ -19,6 +19,7 @@ class Element
     protected $_label;
     protected $_description = array();
     protected $_isRequired;
+    protected $_isReadonly;
     protected $_value;
     protected $_errorValue;
     protected $_errorMessage;
@@ -90,6 +91,17 @@ class Element
 
         } else {
             $this->_isRequired = (bool) $_isRequired;
+            return $this;
+        }
+    }
+
+    public function isReadonly($_isReadonly = null)
+    {
+        if (is_null($_isReadonly)) {
+            return $this->_isReadonly;
+
+        } else {
+            $this->_isReadonly = (bool) $_isReadonly;
             return $this;
         }
     }
@@ -207,18 +219,13 @@ class Element
 
     public function getDescription($_name = null)
     {
-        if ($_name) {
-            if (!empty($this->_description[$_name])) {
+        if ($_name)
+            if (!empty($this->_description[$_name]))
                 return $this->_description[$_name];
-            }
-
-        } else {
-            foreach ($this->_description as $value) {
-                if ($value) {
+        else
+            foreach ($this->_description as $value)
+                if ($value)
                     return $value;
-                }
-            }
-        }
 
         return '';
     }
@@ -490,13 +497,14 @@ class Element
             'update-status' => $this->getUpdateStatus()
         );
 
-        if ($this->getSubType()) {
+        if ($this->getSubType())
             $attrs['sub-type'] = $this->getSubType();
-        }
 
-        if ($this->_isRequired) {
+        if ($this->_isRequired)
             $attrs['is-required'] = 'true';
-        }
+
+        if ($this->_isReadonly)
+            $attrs['is-readonly'] = 'true';
 
         $xml  = Xml::notEmptyCdata('label', $this->getLabel());
         $xml .= Xml::notEmptyCdata('error-message', $this->getErrorMessage());
@@ -518,14 +526,10 @@ class Element
         }
 
         $valueInnerXml = $this->getValueInnterXml($this->_value);
-        if ($valueInnerXml) {
-            $xml .= Xml::node('value', $valueInnerXml);
-        }
+        if ($valueInnerXml) $xml .= Xml::node('value', $valueInnerXml);
 
         $valueInnerXml = $this->getValueInnterXml($this->_errorValue);
-        if ($valueInnerXml) {
-            $xml .= Xml::node('error-value', $valueInnerXml);
-        }
+        if ($valueInnerXml) $xml .= Xml::node('error-value', $valueInnerXml);
 
         if ($this->isError()) {
             $xml .= Xml::notEmptyCdata(
