@@ -467,7 +467,9 @@ class File
     public function getSize()
     {
         if (is_null($this->_size)) {
-            $this->_size = filesize($this->getPath());
+            $this->_size = is_file($this->getPath())
+                         ? filesize($this->getPath())
+                         : false;
         }
 
         return $this->_size;
