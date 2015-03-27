@@ -4,24 +4,23 @@ namespace Ext;
 
 class Number
 {
-    public static function number($_number)
+    public static function number($_number, $_precision = 2)
     {
         $number = str_replace(' ', '', $_number);
 
         if (stripos($number, 'e') !== false) {
-            $number = round((float) str_replace(',', '.', $number), 2);
+            $number = round((float) str_replace(',', '.', $number), $_precision);
 
         } else {
             $number = (float) preg_replace(
-                '/^([0-9\-]+)[.,]([0-9]{1,2}).*$/',
+                '/^([0-9\-]+)[.,]([0-9]{1,' . $_precision . '}).*$/',
                 '\1.\2',
                 $number
             );
         }
 
-        if ((float) $number == (int) $number) {
+        if ((float) $number == (int) $number)
             $number = (int) $number;
-        }
 
         return $number;
     }
