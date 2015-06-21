@@ -1182,5 +1182,7 @@ class ActiveRecord extends \StdClass
         File::chmod($path, 0777);
 
         File\Cache::delete($path);
+
+        return $path;
     }
 }
