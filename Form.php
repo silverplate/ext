@@ -291,6 +291,12 @@ class Form extends \StdClass
             $this->_groups[$_groupName]->addElement($element);
         }
 
+        if ($_element->hasAttribute('is-readonly')) {
+            $element->isReadonly(
+                $_element->getAttribute('is-readonly') == 'true'
+            );
+        }
+
         foreach (
             array('description', 'label-description', 'input-description') as
             $item
