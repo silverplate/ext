@@ -8,17 +8,14 @@ class Collection extends Element
 {
     public function computeValue($_data)
     {
-        $value = array();
-
         if (isset($_data[$this->getName()])) {
             $value = $_data[$this->getName()];
+            if (!is_array($value)) $value = [$value];
 
-            if (!is_array($value)) {
-                $value = array($value);
-            }
+            return $value;
         }
 
-        return $value;
+        return false;
     }
 
     public function checkValue($_value = null)
@@ -37,7 +34,7 @@ class Collection extends Element
     public function getValues()
     {
         if ($this->getUpdateStatus() == static::SUCCESS) {
-            return array($this->getName() => implode(',', $this->getValue()));
+            return [$this->getName() => implode(',', $this->getValue())];
 
         } else {
             return false;
