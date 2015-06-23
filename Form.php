@@ -291,6 +291,8 @@ class Form extends \StdClass
             $this->_groups[$_groupName]->addElement($element);
         }
 
+        $element->isReadonly($_element->hasAttribute('is-readonly'));
+
         foreach (
             array('description', 'label-description', 'input-description') as
             $item
