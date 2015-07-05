@@ -267,24 +267,24 @@ class String
                substr($str, 0, strlen($str) - 1);
     }
 
-    public static function cut($_string, $_length, $_isHtml = true)
+    public static function cut($_string, $_length)
     {
         $result = '';
+        $string = html_entity_decode(strip_tags(trim($_string)));
 
-        if (mb_strlen($_string) > $_length) {
+        if (mb_strlen($string) > $_length) {
             $l = 0;
 
-            foreach (explode(' ', $_string) as $item) {
+            foreach (explode(' ', $string) as $item) {
                 $l += mb_strlen($item);
                 if ($l >= $_length) break;
                 else $result .= ($result == '' ? '' : ' ') . $item;
             }
 
-            $result  = rtrim($result, '.,');
-            $result .= $_isHtml ? '&hellip;' : '...';
+            $result = rtrim($result, '.,') . '…';
 
         } else {
-            $result = $_string;
+            $result = $string;
         }
 
         return $result;
