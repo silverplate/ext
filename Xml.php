@@ -95,12 +95,15 @@ class Xml
              : static::cdata($_name, $_value, $_attrs);
     }
 
-    public static function number($_name, $_number)
+    public static function number($_name, $_number, $_attrs = null)
     {
         $value = Number::format(abs($_number));
         if ($_number < 0) $value = '&minus;' . $value;
 
-        return static::cdata($_name, $value, array('value' => $_number));
+        $attrs = $_attrs ?: [];
+        $attrs['value'] = $_number;
+
+        return static::cdata($_name, $value, $attrs);
     }
 
     /**
