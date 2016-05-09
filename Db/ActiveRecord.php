@@ -668,15 +668,25 @@ class ActiveRecord extends \StdClass
      */
     public function updateAttr($_name, $_value = null)
     {
-        if (!is_null($_value)) {
-            $this->$_name = $_value;
-        }
+        return $this->updateAttrs([$_name => $_value]);
+    }
 
-        $attrs = array($_name => $this->getAttr($_name)->getSqlValue());
+    /**
+     * @param array $_attrs
+     * @return bool
+     */
+    public function updateAttrs($_attrs)
+    {
+        $atrs = [];
+
+        foreach ($_attrs as $name => $value) {
+            if (!is_null($value)) $this->$name = $value;
+            $atrs[$name] = $this->getAttr($name)->getSqlValue();
+        }
 
         return (bool) Db::get()->execute(
             "UPDATE `{$this->_table}`" .
-            Db::get()->getQueryFields($attrs, 'update', true) .
+            Db::get()->getQueryFields($atrs, 'update', true) .
             'WHERE ' . $this->getPrimaryKeyWhere() . ' LIMIT 1'
         );
     }
