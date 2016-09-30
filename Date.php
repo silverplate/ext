@@ -93,13 +93,13 @@ class Date
         return is_null($_type) ? $name : $name[$_type - 1];
     }
 
-    public static function format($_date, $_trimYear = null)
+    public static function format($_date, $_year = null)
     {
         $year = '';
 
         if (
-            $_trimYear === true ||
-            ($_trimYear === null && date('Y') != date('Y', $_date))
+            $_year === true ||
+            ($_year === null && date('Y') != date('Y', $_date))
         ) {
             $year = date(' Y года', $_date);
         }
