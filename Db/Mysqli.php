@@ -2,7 +2,7 @@
 
 namespace Ext\Db;
 
-use \Ext\String;
+use \Ext\String as Str;
 use \Ext\Number;
 use \Ext\File;
 
@@ -464,7 +464,7 @@ class Mysqli extends \Mysqli
         $unique = false;
 
         while (true) {
-            $unique = String::getRandom($length);
+            $unique = Str::getRandom($length);
 
             if (!$this->getEntry($this->getSelect(
                 $_table,

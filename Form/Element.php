@@ -2,7 +2,7 @@
 
 namespace Ext\Form;
 
-use \Ext\String;
+use \Ext\String as Str;
 use \Ext\Xml;
 
 class Element
@@ -236,7 +236,7 @@ class Element
             $name = $_name;
 
         } else {
-            $len = String::getLength(preg_replace(
+            $len = Str::getLength(preg_replace(
                 '/(?:&[a-z]+;)|(?:&#[0-9]+;)/',
                 ' ',
                 $_description

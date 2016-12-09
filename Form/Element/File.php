@@ -3,7 +3,7 @@
 namespace Ext\Form\Element;
 
 use \Ext\Form\Element;
-use \Ext\String;
+use \Ext\String as Str;
 use \Ext\File as F;
 
 class File extends Element
@@ -20,7 +20,7 @@ class File extends Element
             'path' => $_file->getPath(),
             'uri' => $_file->getUri(),
             'ext' => $_file->getExt(),
-            'ext-uppercase' => String::toUpper($_file->getExt()),
+            'ext-uppercase' => Str::toUpper($_file->getExt()),
             'size' => $size['string']
         );
 
