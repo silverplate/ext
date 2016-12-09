@@ -60,11 +60,11 @@ class Date
 
     public static function guessMonth($_value)
     {
-        $value = String::toLower($_value);
+        $value = Str::toLower($_value);
 
         foreach (self::getMonths('ru') as $id => $items) {
             foreach ($items as $item) {
-                $item = String::toLower($item);
+                $item = Str::toLower($item);
                 if (preg_match('/^' . $value . '/', $item)) {
                     return $id + 1;
                 }
@@ -105,7 +105,7 @@ class Date
         }
 
         return date('j ', $_date) .
-               String::toLower(self::getMonth(date('n', $_date), 2)) .
+               Str::toLower(self::getMonth(date('n', $_date), 2)) .
                $year;
     }
 
@@ -127,7 +127,7 @@ class Date
         $hms = $hm . ':' . $date['seconds'];
         $dmy = $date['mday'] .
                ' ' .
-               String::toLower(self::getMonth($date['mon'], 2));
+               Str::toLower(self::getMonth($date['mon'], 2));
 
         if (
             (null === $_trimYear && date('Y') != $date['year']) ||
@@ -298,7 +298,7 @@ class Date
         $value = trim($_value);
         $match = array();
 
-        switch (String::toLower($value)) {
+        switch (Str::toLower($value)) {
             case 'позавчера':   return self::yesterday(self::yesterday());
             case 'вчера':       return self::yesterday();
             case 'сегодня':     return self::today();
@@ -399,8 +399,8 @@ class Date
         $day = date('j', $from);
         $year = date('Y', $from);
         $nowYear = date('Y');
-        $month = String::toLower(static::getMonth(date('m', $from), 2));
-        $monthTill = String::toLower(static::getMonth(date('m', $till), 2));
+        $month = Str::toLower(static::getMonth(date('m', $from), 2));
+        $monthTill = Str::toLower(static::getMonth(date('m', $till), 2));
 
         if (date('Ymd', $from) == date('Ymd', $till)) {
             $result = $day . $spacer . $month;

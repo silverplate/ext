@@ -2,7 +2,7 @@
 
 namespace Ext\Form;
 
-use \Ext\String as Str;
+use \Ext\Str as Str;
 use \Ext\Xml;
 
 class Element

@@ -2,7 +2,7 @@
 
 namespace Ext;
 
-class String
+class Str
 {
     /**
      * @param $_string

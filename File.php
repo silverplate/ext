@@ -190,7 +190,7 @@ class File
     {
         $name = strip_tags($_name);
         $name = html_entity_decode($name, ENT_NOQUOTES, 'utf-8');
-        $name = strtolower(String::translit($name));
+        $name = strtolower(Str::translit($name));
         $name = preg_replace('/[^\s\-a-z.0-9_]/', '', $name);
         $name = preg_replace('/_+/', '-', $name);
         $name = preg_replace('/\s+/', '-', $name);

@@ -2,7 +2,7 @@
 
 namespace Ext\Db;
 
-use \Ext\String as Str;
+use \Ext\Str as Str;
 use \Ext\Number;
 use \Ext\File;
 

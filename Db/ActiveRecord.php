@@ -4,7 +4,7 @@ namespace Ext\Db;
 
 use \Ext\Db;
 use \Ext\Db\ActiveRecord\Attribute;
-use \Ext\String as Str;
+use \Ext\Str as Str;
 use \Ext\Date;
 use \Ext\Xml;
 use \Ext\File;

@@ -3,7 +3,7 @@
 namespace Ext\Form\Element;
 
 use \Ext\Form\Element;
-use \Ext\String as Str;
+use \Ext\Str as Str;
 use \Ext\File as F;
 
 class File extends Element

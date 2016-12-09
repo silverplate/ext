@@ -4,7 +4,7 @@ namespace Ext\Form\Element;
 
 use \Ext\Form\Element;
 use \Ext\File as F;
-use \Ext\String as Str;
+use \Ext\Str as Str;
 
 class Image extends File
 {
