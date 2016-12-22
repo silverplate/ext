@@ -4,7 +4,7 @@ namespace Ext\Db;
 
 use \Ext\Db;
 use \Ext\Db\ActiveRecord\Attribute;
-use \Ext\String;
+use \Ext\Str as Str;
 use \Ext\Date;
 use \Ext\Xml;
 use \Ext\File;
@@ -52,8 +52,8 @@ class ActiveRecord extends \StdClass
     public static function computeTable()
     {
 //        $name = str_replace(array('Ext_'), '', get_called_class());
-//        return Db::get()->getPrefix() . String::underline($name);
-        return Db::get()->getPrefix() . String::underline(get_called_class());
+//        return Db::get()->getPrefix() . Str::underline($name);
+        return Db::get()->getPrefix() . Str::underline(get_called_class());
     }
 
     /**
@@ -79,7 +79,7 @@ class ActiveRecord extends \StdClass
     public function hasAttr($_name)
     {
         return array_key_exists($_name, $this->_attributes) ||
-               array_key_exists(String::underline($_name), $this->_attributes);
+               array_key_exists(Str::underline($_name), $this->_attributes);
     }
 
     /**
@@ -110,7 +110,7 @@ class ActiveRecord extends \StdClass
                 return $this->getPrimaryKey()->getName();
             }
 
-            $name = String::underline($_name);
+            $name = Str::underline($_name);
 
             if (array_key_exists($name, $this->_attributes)) {
                 return $name;
@@ -1021,7 +1021,7 @@ class ActiveRecord extends \StdClass
 
     public function getXml($_node = null, $_xml = null, $_attrs = null)
     {
-        $node = $_node ? $_node : String::dash($this->getTable());
+        $node = $_node ? $_node : Str::dash($this->getTable());
 
         if (empty($_xml))         $xml = array();
         else if (is_array($_xml)) $xml = $_xml;
@@ -1072,8 +1072,7 @@ class ActiveRecord extends \StdClass
                     if ($item{0} != '.' && is_file($filePath)) {
                         $file = File::factory($filePath);
 
-                        $this->_files[String::toLower($file->getFilename())] =
-                            $file;
+                        $this->_files[Str::toLower($file->getFilename())] = $file;
                     }
                 }
 

@@ -62,12 +62,12 @@ class Form extends \StdClass
             return $_name;
 
         } else {
-            $name = String::underline($_name);
+            $name = Str::underline($_name);
             if (isset($this->_elements[$name])) {
                 return $name;
             }
 
-            $name = String::dash($_name);
+            $name = Str::dash($_name);
             if (isset($this->_elements[$name])) {
                 return $name;
             }
@@ -130,7 +130,7 @@ class Form extends \StdClass
     public function computeElementClassName($_type)
     {
         $master = '\\Ext\\Form\\Element';
-        $class = $master . '\\' . String::upperCase($_type);
+        $class = $master . '\\' . Str::upperCase($_type);
         if (!class_exists($class)) $class = $master;
 
         return $class;
@@ -300,7 +300,7 @@ class Form extends \StdClass
             $descriptionEle = Dom::getChildByName($_element, $item);
             if ($descriptionEle) {
                 call_user_func_array(
-                    array($element, 'set' . String::upperCase($item)),
+                    array($element, 'set' . Str::upperCase($item)),
                     array($descriptionEle->nodeValue)
                 );
             }

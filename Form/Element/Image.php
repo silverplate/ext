@@ -4,7 +4,7 @@ namespace Ext\Form\Element;
 
 use \Ext\Form\Element;
 use \Ext\File as F;
-use \Ext\String;
+use \Ext\Str as Str;
 
 class Image extends File
 {
@@ -20,7 +20,7 @@ class Image extends File
             'path' => $_file->getPath(),
             'uri' => $_file->getUri(),
             'ext' => $_file->getExt(),
-            'ext-uppercase' => String::toUpper($_file->getExt()),
+            'ext-uppercase' => Str::toUpper($_file->getExt()),
             'size' => $size['string'],
             'width' => $_file->getWidth(),
             'height' => $_file->getHeight()

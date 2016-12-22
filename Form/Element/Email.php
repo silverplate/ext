@@ -3,7 +3,7 @@
 namespace Ext\Form\Element;
 
 use \Ext\Form\Element;
-use \Ext\String;
+use \Ext\Str as Str;
 
 class Email extends Element
 {
@@ -14,7 +14,7 @@ class Email extends Element
         if (
             $status == static::SUCCESS &&
             $_value != '' &&
-            !String::isEmail($_value)
+            !Str::isEmail($_value)
         ) {
             return static::ERROR_SPELLING;
         }
