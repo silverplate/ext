@@ -651,7 +651,7 @@ class File
             $uri .= '?' . $url['query'];
         }
 
-        return empty($url['host']) ? $uri : "http://{$url['host']}$uri";
+        return empty($url['host']) ? $uri : "{$url['host']}$uri";
     }
 
     public static function computeDirStructure($_value)
