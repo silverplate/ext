@@ -204,6 +204,13 @@ class Form extends \StdClass
         return $this->_buttons[$name];
     }
 
+    public function deleteButton($_name)
+    {
+        if (array_key_exists($_name, $this->_buttons)) {
+            unset($this->_buttons[$_name]);
+        }
+    }
+
     public function getButtons()
     {
         return $this->_buttons;
