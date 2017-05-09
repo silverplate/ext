@@ -298,7 +298,7 @@ class File
      * @param string $_path
      * @param string $_pathStartsWith
      * @param string $_uriStartsWith
-     * @return self|\Ext\Image
+     * @return File|\Ext\Image
      */
     public static function factory($_path,
                                    $_pathStartsWith = null,
@@ -518,7 +518,7 @@ class File
             }
         }
 
-        return Xml::node(empty($_node) ? 'file' : $_node, $xml, $attrs);
+        return Xml::node($_node ?: 'file', $xml, $attrs);
     }
 
     /**

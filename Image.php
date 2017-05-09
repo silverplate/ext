@@ -137,10 +137,10 @@ class Image extends File
             $srcImage = new $class($_srcImage);
         }
 
-        $srcFilePath  = $_srcImage->getPath();
-        $srcExtension = $_srcImage->getExt();
-        $srcWidth     = $_srcImage->getWidth();
-        $srcHeight    = $_srcImage->getHeight();
+        $srcFilePath  = $srcImage->getPath();
+        $srcExtension = $srcImage->getExt();
+        $srcWidth     = $srcImage->getWidth();
+        $srcHeight    = $srcImage->getHeight();
         $src          = $srcImage->getGd();
 
         if (empty($src)) {
