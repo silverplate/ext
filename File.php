@@ -308,14 +308,16 @@ class File
                                    $_pathStartsWith = null,
                                    $_uriStartsWith = null)
     {
-        if (get_called_class() === Image::class) {
-            $class = Image::class;
+        $imageClass = '\Ext\Image';
+
+        if (get_called_class() === $imageClass) {
+            $class = $imageClass;
 
         } else {
             $ext = static::computeExt($_path);
             $class = (!$ext && static::computeIsImage($_path)) ||
                      static::isImageExt($ext)
-                   ? Image::class
+                   ? $imageClass
                    : get_called_class();
         }
 
