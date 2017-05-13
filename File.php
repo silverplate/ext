@@ -2,6 +2,7 @@
 
 namespace Ext;
 
+
 class File
 {
     protected $_path;
@@ -14,6 +15,9 @@ class File
     protected $_uriStartsWith;
     protected $_mime;
     protected $_size;
+
+    /** @var array */
+    protected static $_imageMimeTypes;
 
     /**
      * @var array Двухбуквенное обозначение языка (например, en).
@@ -298,15 +302,22 @@ class File
      * @param string $_path
      * @param string $_pathStartsWith
      * @param string $_uriStartsWith
-     * @return File|\Ext\Image
+     * @return File|Image
      */
     public static function factory($_path,
                                    $_pathStartsWith = null,
                                    $_uriStartsWith = null)
     {
-        $class = static::isImageExt(static::computeExt($_path))
-               ? '\Ext\Image'
-               : get_called_class();
+        if (get_called_class() === Image::class) {
+            $class = Image::class;
+
+        } else {
+            $ext = static::computeExt($_path);
+            $class = (!$ext && static::computeIsImage($_path)) ||
+                     static::isImageExt($ext)
+                   ? Image::class
+                   : get_called_class();
+        }
 
         return new $class($_path, $_pathStartsWith, $_uriStartsWith);
     }
@@ -435,24 +446,43 @@ class File
         return $this->_ext;
     }
 
+    public static function computeIsImage($_path)
+    {
+        return in_array(
+            static::computeMime($_path),
+            static::getImageMimeTypes(),
+            true
+        );
+    }
+
     public static function isImageExt($_ext)
     {
         return in_array(
             strtolower($_ext),
-            array('gif', 'jpeg', 'jpg', 'png', 'tiff')
+            ['gif', 'jpeg', 'jpg', 'png', 'tiff'],
+            true
         );
+    }
+
+    public static function getImageMimeTypes()
+    {
+        if (static::$_imageMimeTypes === null) {
+            static::$_imageMimeTypes = array_map(function($value) {
+                return "image/$value";
+            }, ['gif', 'jpeg', 'jpg', 'png', 'tiff']);
+        }
+
+        return static::$_imageMimeTypes;
     }
 
     public function isImage()
     {
-//        return static::isImageExt($this->getExt());
-        return strpos($this->getMime(), 'image') !== false;
+        return in_array($this->getMime(), static::getImageMimeTypes(), true);
     }
 
     public function getMime()
     {
-        if (!isset($this->_mime)) {
-//            $this->_mime = 'application/' . $this->getExt();
+        if ($this->_mime === null) {
             $this->_mime = static::computeMime($this->getPath());
         }
 
@@ -466,7 +496,7 @@ class File
 
     public function getSize()
     {
-        if (is_null($this->_size)) {
+        if ($this->_size === null) {
             $this->_size = is_file($this->getPath())
                          ? filesize($this->getPath())
                          : false;
@@ -487,13 +517,13 @@ class File
 
     public function getXml($_node = null, $_xml = null, $_attrs = null)
     {
-        $attrs = array(
+        $attrs = [
             'uri' => $this->getUri(),
             'path' => $this->getPath(),
             'filename' => $this->getFilename(),
             'name' => $this->getName(),
-            'extension' => $this->getExt()
-        );
+            'extension' => $this->getExt(),
+        ];
 
         if ($_attrs) {
             $attrs = array_merge($attrs, $_attrs);
