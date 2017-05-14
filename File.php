@@ -308,6 +308,8 @@ class File
                                    $_pathStartsWith = null,
                                    $_uriStartsWith = null)
     {
+        // > PHP 5.4
+        // $imageClass = Image::class;
         $imageClass = '\Ext\Image';
 
         if (get_called_class() === $imageClass) {
@@ -461,7 +463,7 @@ class File
     {
         return in_array(
             strtolower($_ext),
-            ['gif', 'jpeg', 'jpg', 'png', 'tiff'],
+            ['gif', 'jpeg', 'jpg', 'png'],
             true
         );
     }
@@ -471,7 +473,7 @@ class File
         if (static::$_imageMimeTypes === null) {
             static::$_imageMimeTypes = array_map(function($value) {
                 return "image/$value";
-            }, ['gif', 'jpeg', 'jpg', 'png', 'tiff']);
+            }, ['gif', 'jpeg', 'jpg', 'png']);
         }
 
         return static::$_imageMimeTypes;
