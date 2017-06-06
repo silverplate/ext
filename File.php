@@ -154,22 +154,31 @@ class File
 
     public static function computeSizeMeasure($_size)
     {
-        $result = array();
+        $result = [];
 
-        if ($_size / (1024 * 1024) > 0.5) {
-            $result['value'] = $_size / (1024 * 1024);
+        $kb = 1024;
+        $mb = $kb * 1024;
+        $gb = $mb * 1024;
+
+        if ($_size / $gb > 0.5) {
+            $result['value'] = $_size / $gb;
+            $result['measure'] = 'ГБ';
+            $result['measure-en'] = 'GB';
+
+        } else if ($_size / $mb > 0.5) {
+            $result['value'] = $_size / $mb;
             $result['measure'] = 'МБ';
             $result['measure-en'] = 'MB';
 
-        } else if ($_size / 1024 > 0.5) {
-            $result['value'] = $_size / 1024;
+        } else if ($_size / $kb > 0.5) {
+            $result['value'] = $_size / $kb;
             $result['measure'] = 'КБ';
             $result['measure-en'] = 'KB';
 
         } else {
             $result['value'] = $_size;
-            $result['measure'] = 'байт';
-            $result['measure-en'] = 'bite';
+            $result['measure'] = 'б';
+            $result['measure-en'] = 'b';
         }
 
         $result['value'] = Number::format($result['value']);
