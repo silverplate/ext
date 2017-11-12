@@ -1019,23 +1019,55 @@ class ActiveRecord extends \StdClass
         return $date;
     }
 
+    public static function getItemXml($_id = null, $_title = null, $_node = null, $_xml = null, $_attrs = null)
+    {
+        $xml = [];
+        if (!empty($_xml)) {
+            $xml = (array) $_xml;
+        }
+
+        if (!empty($_title)) {
+            Xml::append($xml, Xml::cdata('title', $_title));
+        }
+
+        $attrs = empty($_attrs) ? [] : $_attrs;
+
+        if (!empty($attrs['id'])) {
+            $attrs['id'] = $_id;
+        }
+
+        return Xml::node($_node, $xml, $attrs);
+    }
+
     public function getXml($_node = null, $_xml = null, $_attrs = null)
     {
-        $node = $_node ? $_node : Str::dash($this->getTable());
+//        $xml = [$_xml];
+//        if (empty($_xml)) {
+//            $xml = [];
+//        } else if (is_array($_xml)) {
+//            $xml = $_xml;
+//        }
+        $xml = [];
+        if (!empty($_xml)) {
+            $xml = (array) $_xml;
+        }
 
-        if (empty($_xml))         $xml = array();
-        else if (is_array($_xml)) $xml = $_xml;
-        else                      $xml = array($_xml);
+//        if (!array_key_exists('title', $xml)) {
+//            Xml::append($xml, Xml::cdata('title', $this->getTitle()));
+//        }
 
-        if (!array_key_exists('title', $xml))
-            Xml::append($xml, Xml::cdata('title', $this->getTitle()));
+        $attrs = empty($_attrs) ? [] : $_attrs;
+//        if (!array_key_exists('id', $attrs)) {
+//            $attrs['id'] = $this->id;
+//        }
 
-        $attrs = empty($_attrs) ? array() : $_attrs;
-
-        if (!array_key_exists('id', $attrs))
-            $attrs['id'] = $this->id;
-
-        return Xml::node($node, $xml, $attrs);
+        return static::getItemXml(
+            $this->id,
+            $this->getTitle(),
+            $_node ?: Str::dash($this->getTable()),
+            $xml,
+            $attrs
+        );
     }
 
     public function getBackOfficeXml($_xml = array(), $_attrs = array())
