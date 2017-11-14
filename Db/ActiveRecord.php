@@ -1032,7 +1032,7 @@ class ActiveRecord extends \StdClass
 
         $attrs = empty($_attrs) ? [] : $_attrs;
 
-        if (!empty($attrs['id'])) {
+        if (empty($attrs['id'])) {
             $attrs['id'] = $_id;
         }
 
