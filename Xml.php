@@ -125,16 +125,17 @@ class Xml
 
     /**
      * Удаление неотображаемых символов (ASCII control characters),
-     * используемых в MS Word, которые ломают XML.
+     * используемых в MS Word, Outlook и других программах, которые ломают XML.
      *
-     * @link http://www.danshort.com/ASCIImap/indexhex.htm
+     * @link http://www.asciitable.com
      * @param string $_src
      * @return string
      */
     public static function removeControlCharacters($_src)
     {
         // Кроме x09, x0A
-        return preg_replace("/[\x{7F}\x{00}-\x{08}\x{0B}-\x{1F}]/", '', $_src);
+//        return preg_replace("/[\x{7F}\x{00}-\x{08}\x{0B}-\x{1F}]/", '', $_src);
+        return preg_replace("/[\x{00}-\x{1F}\x{7F}]/", '', $_src);
     }
 
     /**
