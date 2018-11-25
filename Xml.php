@@ -133,9 +133,7 @@ class Xml
      */
     public static function removeControlCharacters($_src)
     {
-        // Кроме x09, x0A
-//        return preg_replace("/[\x{7F}\x{00}-\x{08}\x{0B}-\x{1F}]/", '', $_src);
-        return preg_replace("/[\x{00}-\x{1F}\x{7F}]/", '', $_src);
+        return str_replace('�', '', preg_replace('/[\000-\031\127]/', '', $_src));
     }
 
     /**
@@ -210,7 +208,8 @@ class Xml
      */
     public static function getDocumentForXml($_xml, $_root = null, $_dtd = true)
     {
-        return static::getHead($_dtd, empty($_root) ? 'root' : $_root) . $_xml;
+        return static::getHead($_dtd, empty($_root) ? 'root' : $_root) .
+               static::removeControlCharacters($_xml);
     }
 
     public static function transform($_xml, $_tmpl)
