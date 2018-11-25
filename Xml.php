@@ -133,7 +133,7 @@ class Xml
      */
     public static function removeControlCharacters($_src)
     {
-        return str_replace('�', '', preg_replace('/[\000-\031\127]/', '', $_src));
+        return str_replace('�', '', preg_replace('/[\000-\031\177]/', '', $_src));
     }
 
     /**
