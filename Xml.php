@@ -133,7 +133,10 @@ class Xml
      */
     public static function removeControlCharacters($_src)
     {
-        return str_replace('�', '', preg_replace('/[\000-\031\177]/', '', $_src));
+// В этом варианте ломается цитирование в JS
+//        return str_replace('�', '', preg_replace('/[\000-\031\177]/', '', $_src));
+        // Кроме x09, x0A
+        return preg_replace("/[\x{7F}\x{00}-\x{08}\x{0B}-\x{1F}]/", '', $_src);
     }
 
     /**
