@@ -101,7 +101,7 @@ class Str
     public static function isEmail($_email)
     {
         return (boolean) preg_match(
-            '/^[0-9a-zA-Z_.-]+@([0-9a-zA-Z][0-9a-zA-Z-]*\.)+[a-zA-Z]{2,4}$/',
+            '/^[0-9a-zA-Z_.-]+@([0-9a-zA-Z][0-9a-zA-Z-]*\.)+[a-zA-Z]{2,8}$/',
 //             '/^[0-9a-zA-Z_][0-9a-zA-Z_.-]*[0-9a-zA-Z_-]@([0-9a-zA-Z][0-9a-zA-Z-]*\.)+[a-zA-Z]{2,4}$/',
             $_email
         );
