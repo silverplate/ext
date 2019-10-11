@@ -120,6 +120,12 @@ class CalendarDatetime extends Element
         }
     }
 
+    public function __toString()
+    {
+        $values = $this->getValues();
+        return $values ? array_values($values)[0] : '';
+    }
+
     public function setValue()
     {
         if (func_num_args() == 1) {

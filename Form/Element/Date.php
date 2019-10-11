@@ -76,12 +76,11 @@ class Date extends Element
 
     public function getValues()
     {
-        if ($this->getUpdateStatus() == static::SUCCESS) {
-            return array($this->getName() =>
-                         implode('-', array_reverse($this->getValue())));
-        } else {
-            return false;
+        if ($this->getUpdateStatus() === static::SUCCESS) {
+            return [$this->getName() => implode('-', array_reverse($this->getValue()))];
         }
+
+        return false;
     }
 
     public function setValue()
