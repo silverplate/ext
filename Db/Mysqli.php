@@ -69,16 +69,17 @@ class Mysqli extends \Mysqli
 
     /**
      * Connects to database with passed connection string:
-     * mysql://u:p@host/db?prefix=prfx_&set-names=utf8
+     * "mysql://u:p@host/db?prefix=prfx_&set-names=utf8"
      *
      * @param string $_connectionString
+     * @param array|null $_sslOptions
      */
-    public function __construct($_connectionString)
+    public function __construct($_connectionString, array $_sslOptions = null)
     {
         $connectionString = '';
 
         for ($i = strlen($_connectionString) - 1; $i >= 0; $i--) {
-            $append = $_connectionString{$i} == '@' &&
+            $append = $_connectionString{$i} === '@' &&
                       strpos($_connectionString, '@', $i + 1) !== false
                     ? '~Z~'
                     : $_connectionString{$i};
@@ -88,7 +89,7 @@ class Mysqli extends \Mysqli
 
         $params = parse_url($connectionString);
 
-        foreach (array('user', 'pass', 'host', 'port', 'path') as $item) {
+        foreach (['user', 'pass', 'host', 'port', 'path'] as $item) {
             $params[$item] = isset($params[$item])
                            ? str_replace('~Z~', '@', $params[$item])
                            : '';
@@ -100,16 +101,32 @@ class Mysqli extends \Mysqli
         $this->_port     = (int) $params['port'];
         $this->_database = trim($params['path'], '/');
 
-        @parent::__construct($this->_host,
-                             $this->_user,
-                             $this->_password,
-                             $this->_database,
-                             $this->_port);
+        if ($_sslOptions) {
+            parent::__construct();
+            $this->options(MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT, true);
+            $this->ssl_set($_sslOptions['key'], $_sslOptions['cert'], $_sslOptions['ca'], null, null);
+
+            $this->real_connect(
+                $this->_host,
+                $this->_user,
+                $this->_password,
+                $this->_database,
+                $this->_port,
+                null,
+                MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT
+            );
+        } else {
+            parent::__construct($this->_host,
+                                $this->_user,
+                                $this->_password,
+                                $this->_database,
+                                $this->_port);
+        }
 
         $this->_throwIfError();
 
         if (!empty($params['query'])) {
-            $query = array();
+            $query = [];
 
             foreach (explode('&', $params['query']) as $item) {
                 list($name, $value) = explode('=', $item);
@@ -527,7 +544,7 @@ class Mysqli extends \Mysqli
         throw new \Exception($error);
     }
 
-    protected function _throwIfError()
+    protected function _throwIfError(): void
     {
         if ($this->connect_error) {
             $this->_error(

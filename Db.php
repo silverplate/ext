@@ -29,21 +29,21 @@ class Db
     }
 
     /**
-     * @param string $_connectionString mysql://user:password@host/database
+     * @param string $_connectionString "mysql://user:password@host/database"
+     * @param array|null $_sslOptions
      * @return \Ext\Db\Mysqli
      * @throws \Exception
      */
-    public static function init($_connectionString = null)
+    public static function init($_connectionString = null, array $_sslOptions = null)
     {
-        global $gDbConnectionString;
+        global $gDbConnectionString, $gDbSslOptions;
 
-        $str = $_connectionString ? $_connectionString : $gDbConnectionString;
-
+        $str = $_connectionString ?: $gDbConnectionString;
         if (empty($str)) {
             throw new \Exception('There are no params for connection.');
         }
 
-        static::set(new Mysqli($str));
+        static::set($db = new Mysqli($str, $_sslOptions ?: $gDbSslOptions));
         return static::get();
     }
 
