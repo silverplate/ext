@@ -53,20 +53,20 @@ class File extends Element
 
     public function checkValue($_value = null)
     {
-        $isUploaded = empty($_value) ||
-                      !is_array($_value) ||
-                      empty($_value['name']) ||
-                      empty($_value['tmp_name']);
+        $isUploaded = !empty($_value) &&
+                      is_array($_value) &&
+                      !empty($_value['name']) &&
+                      !empty($_value['tmp_name']);
 
-        if ($this->isRequired() && !$isUploaded) {
+        if (!$isUploaded && $this->isRequired()) {
             return static::ERROR_REQUIRED;
-
-        } else if (!$isUploaded) {
-            return static::NO_UPDATE;
-
-        } else {
-            return static::SUCCESS;
         }
+
+        if (!$isUploaded) {
+            return static::NO_UPDATE;
+        }
+
+        return static::SUCCESS;
     }
 
     public function getValues()
