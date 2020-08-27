@@ -1069,7 +1069,7 @@ class ActiveRecord extends \StdClass
                 while (false !== $item = readdir($handle)) {
                     $filePath = rtrim($this->getFilePath(), '/') . '/' . $item;
 
-                    if ($item{0} != '.' && is_file($filePath)) {
+                    if (strpos($item, '.') !== 0 && is_file($filePath)) {
                         $file = File::factory($filePath);
 
                         $this->_files[Str::toLower($file->getFilename())] = $file;

@@ -17,17 +17,17 @@ class Str
         $sep = $_separators ?: array('_', '-', ':', '\\');
 
         for ($j = 0, $len = strlen($_string), $i = 0; $i < $len; $i++) {
-            $s = $_string{$i};
+            $s = $_string[$i];
 
             if (
                 !empty($res[$j]) &&
-                (in_array($s, $sep) || ($s == $uc{$i} && ctype_alpha($s)))
+                (in_array($s, $sep) || ($s === $uc[$i] && ctype_alpha($s)))
             ) {
                 $res[++$j] = '';
             }
 
             if (!in_array($s, $sep)) {
-                $res[$j] .= $lc{$i};
+                $res[$j] .= $lc[$i];
             }
         }
 
@@ -205,15 +205,17 @@ class Str
         $result = '';
 
         for ($i = 0; $i < $_length; $i++) {
-            if (0 == rand(0, 3)) {
-                $symbol = $letters{rand(0, strlen($letters) - 1)};
+            $r1 = random_int(0, 3);
+            if (0 === $r1) {
+                $symbol = $letters[random_int(0, strlen($letters) - 1)];
 
-                if (0 == rand(0, 3)) {
+                $r2 = random_int(0, 3);
+                if (0 === $r2) {
                     $symbol = strtoupper($symbol);
                 }
 
             } else {
-                $symbol = $numbers{rand(0, strlen($numbers) - 1)};
+                $symbol = $numbers[random_int(0, strlen($numbers) - 1)];
             }
 
             $result .= $symbol;

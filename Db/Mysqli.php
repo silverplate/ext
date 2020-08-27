@@ -79,10 +79,12 @@ class Mysqli extends \Mysqli
         $connectionString = '';
 
         for ($i = strlen($_connectionString) - 1; $i >= 0; $i--) {
-            $append = $_connectionString{$i} === '@' &&
+            $symbol = $_connectionString[$i];
+
+            $append = $symbol === '@' &&
                       strpos($_connectionString, '@', $i + 1) !== false
                     ? '~Z~'
-                    : $_connectionString{$i};
+                    : $symbol;
 
             $connectionString = $append . $connectionString;
         }

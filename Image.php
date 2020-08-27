@@ -21,16 +21,17 @@ class Image extends File
 
     public function computeImageSize()
     {
+        $this->_width = 0;
+        $this->_height = 0;
+        $this->_mime = '';
+
         if ($this->getSize() > 0) {
             $size = getimagesize($this->getPath());
-            $this->_width = $size[0];
-            $this->_height = $size[1];
-            $this->_mime = $size['mime'];
-
-        } else {
-            $this->_width = 0;
-            $this->_height = 0;
-            $this->_mime = '';
+            if ($size) {
+                $this->_width = $size[0];
+                $this->_height = $size[1];
+                $this->_mime = $size['mime'];
+            }
         }
     }
 
