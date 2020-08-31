@@ -455,7 +455,7 @@ class Mysqli extends \Mysqli
      * @param string $_where
      * @return int
      */
-    public function getNextNumber($_table, $_field, $_where = null)
+    public function getNextNumber($_table, $_field, $_where = null): int
     {
         $result = $this->getEntry($this->getSelect(
             $_table,
@@ -465,7 +465,7 @@ class Mysqli extends \Mysqli
             1
         ));
 
-        return (int) $result[$_field] + 1;
+        return $result ? (int) $result[$_field] + 1 : 1;
     }
 
     /**
@@ -480,7 +480,6 @@ class Mysqli extends \Mysqli
     {
         $field = is_null($_field) ? $_table . '_id' : $_field;
         $length = is_null($_length) ? 30 : $_length;
-        $unique = false;
 
         while (true) {
             $unique = Str::getRandom($length);
