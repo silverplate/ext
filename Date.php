@@ -493,6 +493,18 @@ class Date
         );
     }
 
+    public static function getDayStart($_date = null)
+    {
+        $date = $_date ?: self::today();
+
+        return \mktime(
+            0, 0, 0,
+            (int) \date('n', $date),
+            (int) \date('j', $date),
+            (int) \date('Y', $date)
+        );
+    }
+
     public static function getDayEnd($_date = null)
     {
         $date = $_date ?: self::today();
