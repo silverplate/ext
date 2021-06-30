@@ -235,7 +235,7 @@ class Str
         $consonant = 'bcdfghjklmnpqrstvwxz';
         $vowel = 'aeiouy';
         $result = '';
-        $length = $_length < 4 ? 4 : $_length;
+        $length = max($_length, 4);
         $pairs = floor($length / 2) - 1;
 
         for ($i = 0; $i < $pairs; $i++) {
@@ -267,6 +267,50 @@ class Str
 
         return substr($str, strlen($str) - 1, 1) .
                substr($str, 0, strlen($str) - 1);
+    }
+
+    public static function getReadablePassword($_length = 8)
+    {
+        $result = '';
+        $consonant = 'bdfhklmnpqrstvwxz';
+        $maxConsonantIndex = strlen($consonant) - 1;
+
+        $vowel = 'aeiu';
+        $maxVowelIndex = strlen($vowel) - 1;
+
+        $length = max($_length, 8);
+        $numbers = $length === 8 ? 2 : 4;
+        $pairs = floor(($length - $numbers) / 2);
+
+        for ($i = 0; $i < $pairs; $i++) {
+            $result .= $consonant[random_int(0, $maxConsonantIndex)];
+            $result .= $vowel[random_int(0, $maxVowelIndex)];
+        }
+
+        if ($length % 2 !== 0) {
+            $result .= $consonant[random_int(0, $maxConsonantIndex)];
+        }
+
+        $isLowerCase = false;
+        $isUpperCase = false;
+
+        while (!$isLowerCase || !$isUpperCase) {
+            for ($i = 1; $i <= $length; $i++) {
+                if (random_int(0, 2) === 2) {
+                    $last = strlen($result) - $i;
+                    $result[$last] = strtoupper($result[$last]);
+                    $isUpperCase = true;
+                } else {
+                    $isLowerCase = true;
+                }
+            }
+        }
+
+        for ($i = 0; $i < $numbers; $i++) {
+            $result .= random_int(1, 9);
+        }
+
+        return $result;
     }
 
     public static function cut($_string, $_length)
